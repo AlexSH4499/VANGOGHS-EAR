@@ -33,6 +33,7 @@ jobs:
         run: |
             cd GUI
             cd VanGogh
+            chmod +x ./gradlew
             ./gradlew test
 
       - name: Build Project
