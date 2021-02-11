@@ -61,7 +61,6 @@
                     android:id="@+id/audio_fragment_container_view"
                     android:layout_width="240dp"
                     android:layout_height="199dp"
-                    android:layout_above="@+id/fragment_container_view"
                     android:layout_alignParentEnd="true"
                     android:layout_marginEnd="29dp"
                     android:layout_marginBottom="44dp"
@@ -71,8 +70,8 @@
                     android:id="@+id/toggle_frags"
                     android:layout_width="118dp"
                     android:layout_height="69dp"
-                    android:layout_above="@+id/analyze_audio_button"
-                    android:layout_marginBottom="9dp"
+                    android:layout_above="@+id/fragment_container_view"
+                    android:layout_marginBottom="46dp"
                     android:textOff="Tablature"
                     android:textOn="Chord Diagram" />
 
