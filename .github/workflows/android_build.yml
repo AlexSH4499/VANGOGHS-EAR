@@ -31,7 +31,8 @@ jobs:
 
       - name: Run Tests
         run: |
-            cd /GUI/VanGogh/
+            cd GUI
+            cd VanGogh
             ./gradlew test
 
       - name: Build Project
