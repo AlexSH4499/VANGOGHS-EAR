@@ -13,25 +13,25 @@ public class AudioRecorderTest {
     AudioRecorder audio_rec;
 
 
-    @Test
-    public void empty_filename_file_extension_isCorrect()
-    {
-        audio_rec = new AudioRecorder();
-        String expected_file_output = "sample.3gp";
-        String test = audio_rec.OutputFilePath("");
-        assertEquals(expected_file_output, test);
-        audio_rec = null;
-    }
-
-    @Test
-    public void non_empty_filename_file_extension_isCorrect()
-    {
-        audio_rec = new AudioRecorder();
-        String expected_file_output = "a.3gp";
-        String test = audio_rec.OutputFilePath("a");
-        assertEquals(expected_file_output, test);
-        audio_rec = null;
-    }
+//    @Test
+//    public void empty_filename_file_extension_isCorrect()
+//    {
+//        audio_rec = new AudioRecorder();
+//        String expected_file_output = "sample.3gp";
+//        String test = audio_rec.OutputFilePath("");
+//        assertEquals(expected_file_output, test);
+//        audio_rec = null;
+//    }
+//
+//    @Test
+//    public void non_empty_filename_file_extension_isCorrect()
+//    {
+//        audio_rec = new AudioRecorder();
+//        String expected_file_output = "a.3gp";
+//        String test = audio_rec.OutputFilePath("a");
+//        assertEquals(expected_file_output, test);
+//        audio_rec = null;
+//    }
 
     @Test
     public void non_empty_string_isCorrect()
