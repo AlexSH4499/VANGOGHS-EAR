@@ -31,8 +31,8 @@ public class ChordModelTest {
         String clss = null;
 
         ChordModel chord = new ChordModel(name,clss);
-        assertEquals(chord.getChordClass(),clss);
-        assertEquals(chord.getChordName(), name);
+        assertEquals(chord.getChordClass(),"");
+        assertEquals(chord.getChordName(), "");
     }
 
     @Test
