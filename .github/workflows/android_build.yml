@@ -37,4 +37,7 @@ jobs:
             ./gradlew test
 
       - name: Build Project
-        run: ./gradlew assemble
+        run: |
+            cd GUI
+            cd VanGogh
+            ./gradlew assemble
