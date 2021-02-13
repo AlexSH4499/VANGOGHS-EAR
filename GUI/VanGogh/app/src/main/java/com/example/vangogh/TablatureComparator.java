@@ -61,7 +61,7 @@ public class TablatureComparator extends AppCompatActivity
 
                 removeAllFragments();
 
-                man.beginTransaction().add(R.id.fragment_container_view, audio_player, "AUDIO PLAYER").commit();
+//                man.beginTransaction().add(R.id.fragment_container_view, audio_player, "AUDIO PLAYER").commit();
 
 
             }
@@ -89,7 +89,7 @@ public class TablatureComparator extends AppCompatActivity
 
                     removeAllFragments();
 
-                    man.beginTransaction().add(R.id.fragment_container_view, tab_frag, "TABLATURE").commit();
+//                    man.beginTransaction().add(R.id.fragment_container_view, tab_frag, "TABLATURE").commit();
                 }catch(Exception e) {
                     e.printStackTrace();
                 }

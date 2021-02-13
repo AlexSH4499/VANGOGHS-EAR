@@ -6,10 +6,12 @@ import android.app.AlertDialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 
+import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Bundle;
 
 import android.util.Log;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -20,13 +22,18 @@ import android.widget.Toast;
 import android.widget.ToggleButton;
 
 
+import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.navigation.ui.*;
 
+
+import com.google.android.material.navigation.NavigationView;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -43,12 +50,18 @@ import utils.FragmentFactory;
 public class MainActivity extends AppCompatActivity implements AppBarConfiguration.OnNavigateUpListener
 {
 
+    private PermissionManager permissionManager;
+    private DrawerLayout mDrawer;
+    private NavigationView nvDrawer;
+    private ActionBarDrawerToggle drawerToggle;
+
     Map<String, Integer> permissions;
 
     AudioRecorder audio_fragment;
     ToggleButton toggle_frags ;
     Button dbview_button;
     Toolbar toolbar;
+
     private Uri selected_recording;
 
 
@@ -59,6 +72,7 @@ public class MainActivity extends AppCompatActivity implements AppBarConfigurati
     private final int REQUEST_ACCESS_MEDIA = 3;
     private final int ALL_REQ_PERMS = 2020;
     private int clicks = 0;
+
     private static final String[] PERMISSIONS = {
             "RECORD_AUDIO",
             "READ_EXTERNAL_STORAGE",
@@ -66,8 +80,7 @@ public class MainActivity extends AppCompatActivity implements AppBarConfigurati
             "ACCESS_MEDIA_LOCATION"
     };
 
-    
-    
+
     private void preparePermissions()
     {
         int  i = 0;
@@ -87,135 +100,84 @@ public class MainActivity extends AppCompatActivity implements AppBarConfigurati
     protected void onCreate(Bundle savedInstanceState)
     {
 
-        preparePermissions();
-
-        final FragmentManager man = getSupportFragmentManager();
-        final FragmentTransaction transaction = man.beginTransaction();
-
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        toolbar = (Toolbar) findViewById(R.id.topAppBar);
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                //Do stuff here when clicking the menu button
-                if(clicks % 2 == 0)
-                    findViewById(R.id.fragment_layout).setVisibility(View.INVISIBLE);
-                else{
-                    findViewById(R.id.fragment_layout).setVisibility(View.VISIBLE);
-                }
+        mDrawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        drawerToggle = setupDrawerToggle();
+        // Setup toggle to display hamburger icon with nice animation
 
-                clicks = clicks + 1 % 2;
-            }
-        });
+        drawerToggle.setDrawerIndicatorEnabled(true);
+        drawerToggle.syncState();
 
-        requestPermissions();
-
-        ToggleButton record_show_btn = (ToggleButton) findViewById(R.id.record_show_button);
-
-        record_show_btn.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
-                removeAllFragments();
-
-                Log.d(TAG, "Entering On Checked Changed Listener");
-                if(isChecked)
-                {
-                    if(man.findFragmentByTag("AUDIO PLAYER")!=null) {
-                        //remove this one
-                        man.beginTransaction().remove(man.findFragmentByTag("AUDIO PLAYER")).commit();
-                    }
-
-
-
-                    Log.d(TAG, "Entered On Checked Flag");
-
-                        Log.d(TAG, "Adding Audio Recorder Fragment");
-                        audio_fragment = new AudioRecorder();
-                        man.beginTransaction().add(R.id.audio_fragment_container_view, audio_fragment, "AUDIO RECORDER").commit();
-
-                }
-                else{
-                    Log.d(TAG, "Failed On Checked Flag");
-
-                    swapFragments("", "AUDIO RECORDER");
-
-                    if(man.findFragmentByTag("TABLATURE")!=null) {
-                        //remove this one
-                        man.beginTransaction().remove(man.findFragmentByTag("TABLATURE")).commit();
-                    }
-
-                    if(man.findFragmentByTag("CHORD FRAG")!=null) {
-                        //remove this one
-                        man.beginTransaction().remove(man.findFragmentByTag("CHORD_FRAG")).commit();
-                    }
-
-                }
-
-            }
-        });
-
-        toggle_frags = (ToggleButton) findViewById(R.id.toggle_frags);
-
-        toggle_frags.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
-
-                removeAllFragments();
-
-                Log.d(TAG, "Entering On Checked Changed Listener");
-                if(isChecked)
-                {
-                    Log.d(TAG, "Entered On Checked Flag");
-                    if(man.findFragmentByTag("CHORD") != null) {
-                        Log.d(TAG, "Swapped TAB with CHORD");
-                        swapFragments("TABLATURE", "CHORD");
-                    }
-                    else
-                    {
-                        FragmentManager manager = getSupportFragmentManager();
-
-                        // no fragment, lets add it manually
-                        manager.beginTransaction().add(R.id.fragment_container_view, new TablatureFragment(),"TABLATURE"  ).commit();
-
-                    }
-                }
-                else{
-                    Log.d(TAG, "Failed On Checked Flag");
-                    if(man.findFragmentByTag("TABLATURE") != null) {
-
-                        Log.d(TAG, "Swapped TAB with CHORD");
-                        swapFragments("CHORD", "TABLATURE");
-                    }
-                    else
-                    {
-                        FragmentFactory fragmentFactory = new FragmentFactory();
-                        FragmentManager manager = getSupportFragmentManager();
-                        // no fragment, lets add it manually
-                        manager.beginTransaction().add(R.id.fragment_container_view, new ChordFragment(), "CHORD").commit();
-                    }
-                }
-
-            }
-        });
-
-        Button find_file_btn = (Button) findViewById(R.id.find_button);
-        find_file_btn.setOnClickListener(new View.OnClickListener()
-        {
-            public void onClick(View v)
-            {
-
-                searchForFile(true,false);//testing tablature load
-            }
-
-        });
-
+        // Tie DrawerLayout events to the ActionBarToggle
+        mDrawer.addDrawerListener(drawerToggle);
+        nvDrawer = (NavigationView) findViewById(R.id.nvView);
+        setupDrawerContent(nvDrawer);
 
     }
 
+    private ActionBarDrawerToggle setupDrawerToggle()
+    {
+        // NOTE: Make sure you pass in a valid toolbar reference.  ActionBarDrawToggle() does not require it
+        // and will not render the hamburger icon without it.
+        return new ActionBarDrawerToggle(this, mDrawer, toolbar, R.string.drawer_open,  R.string.drawer_close);
+    }
+
+    private void setupDrawerContent(NavigationView navigationView)
+    {
+        navigationView.setNavigationItemSelectedListener(
+                new NavigationView.OnNavigationItemSelectedListener() {
+                    @Override
+                    public boolean onNavigationItemSelected(MenuItem menuItem) {
+                        selectDrawerItem(menuItem);
+                        return true;
+                    }});
+    }
+
+    public void selectDrawerItem(MenuItem menuItem) {
+
+        // Create a new fragment and specify the fragment to show based on nav item clicked
+        Fragment fragment = null;
+        Class fragmentClass;
+
+        switch(menuItem.getItemId()) {
+            case R.id.nav_first_fragment:
+                fragmentClass = ChordFragment.class;
+                break;
+            case R.id.nav_second_fragment:
+                fragmentClass = TablatureFragment.class;
+                break;
+            case R.id.nav_third_fragment:
+                fragmentClass = AudioRecorder.class;
+                break;
+            default:
+                fragmentClass = AudioRecorder.class;
+                break;
+        }
+
+        try {
+            fragment = (Fragment) fragmentClass.newInstance();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        // Insert the fragment by replacing any existing fragment
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        fragmentManager.beginTransaction().replace(R.id.flContent, fragment).commit();
+
+        // Highlight the selected item has been done by NavigationView
+        menuItem.setChecked(true);
+
+        // Set action bar title
+        setTitle(menuItem.getTitle());
+
+        // Close the navigation drawer
+        mDrawer.closeDrawers();
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu)
@@ -225,107 +187,32 @@ public class MainActivity extends AppCompatActivity implements AppBarConfigurati
         return true;
     }
 
+    // `onPostCreate` called when activity start-up is complete after `onStart()`
+    // NOTE 1: Make sure to override the method with only a single `Bundle` argument
+    // Note 2: Make sure you implement the correct `onPostCreate(Bundle savedInstanceState)` method.
+    // There are 2 signatures and only `onPostCreate(Bundle state)` shows the hamburger icon.
+    @Override
+    protected void onPostCreate(Bundle savedInstanceState) {
+        super.onPostCreate(savedInstanceState);
+        // Sync the toggle state after onRestoreInstanceState has occurred.
+        drawerToggle.syncState();
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        // Pass any configuration change to the drawer toggles
+        drawerToggle.onConfigurationChanged(newConfig);
+    }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-
-        switch (item.getItemId()) {
-            // action with ID action_refresh was selected
-            case R.id.action_db_view:
-
-                try{
-                    final Intent intent = new Intent(this, DatabaseView.class);
-                    startActivity(intent);
-                }catch (Exception e)
-                {
-                    e.printStackTrace();
-                }
-                Toast.makeText(this, "DB View selected", Toast.LENGTH_SHORT)
-                        .show();
-                break;
-            // action with ID action_settings was selected
-            case R.id.action_settings:
-                Toast.makeText(this, "Settings selected", Toast.LENGTH_SHORT)
-                        .show();
-                break;
-            case R.id.action_record_view:
-                Toast.makeText(this, "Record View selected", Toast.LENGTH_SHORT)
-                        .show();
-                break;
-            case R.id.action_help:
-                //TODO Write long msg
-                showMessage("Help:",
-                        "Select File:\nSelect text file to load tablature\n\n" +
-                                "Record:\nReveals button to record\n" +
-                                "Press 'Start' to start\nPress 'Stop' to stop, unless 5 minutes pass\n\n" +
-                                "Tablature:\nReveals tablature viewer where you can load tablatures to see them\n" +
-                                "Tablature also reveals Chord Diagram to view and listen to chords\n\n" +
-                                "Chord Diagram:\nType name of chord to listen to chord\n" +
-                                "Press 'Pause' to press play to listen to the recording again\n\n" +
-                                "You can also delete tablatures");
-                break;
-            default:
-                break;
-        }
-
-        return true;
+        // The action bar home/up action should open or close the drawer.
+        if (drawerToggle.onOptionsItemSelected(item))
+            return true;
+        return super.onOptionsItemSelected(item);
     }
 
-
-    private void removeAllFragments()
-    {
-        FragmentManager man = this.getSupportFragmentManager();
-
-        for(Fragment frag : man.getFragments())
-        {
-            if(frag != null)
-                man.beginTransaction().remove(frag).commit();
-        }
-
-    }
-
-
-    private void swapFragments(String incoming, String outgoing)
-    {
-        FragmentManager man = this.getSupportFragmentManager();
-        Fragment incoming_fragment = FragmentFactory.createFragment(incoming);
-        if(incoming.isEmpty() && outgoing.isEmpty())
-        {
-            // Do Nothing
-            return;
-        }
-
-        if(outgoing.isEmpty())
-        {
-                man.beginTransaction().add(R.id.fragment_container_view,incoming_fragment, incoming).commit();
-                return;
-        }
-
-        if(incoming.isEmpty())
-        {
-            man.beginTransaction().remove(man.findFragmentByTag(outgoing)).commit();
-            return ;
-        }
-
-        if(man.findFragmentByTag(outgoing)!=null)
-        {
-            //remove this one
-            man.beginTransaction().remove(man.findFragmentByTag(outgoing)).commit();
-
-        }
-
-
-        if(incoming_fragment != null)
-        {
-            man.beginTransaction().add(R.id.fragment_container_view,incoming_fragment, incoming).commit();
-        }
-
-        else{
-            Log.e(TAG, "Invalid fragment created for swapping views:" + incoming);
-            throw new IllegalStateException("Invalid fragment created for swapping views:"+ incoming);
-        }
-
-        return;
-    }
 
     /**
      * Generates an intent for the FileManager activity and awaits a result with code 1234 for a file URI.
@@ -335,14 +222,13 @@ public class MainActivity extends AppCompatActivity implements AppBarConfigurati
         if(wavFileRequest)
         {
             Intent intent = new Intent(this, FileManager.class);
-
             startActivityForResult(intent,3333);
             return;
         }
+
         if(tabRequest)
         {
             Intent intent = new Intent(this, FileManager.class);
-
             startActivityForResult(intent,5678);
             return;
         }
@@ -350,12 +236,10 @@ public class MainActivity extends AppCompatActivity implements AppBarConfigurati
         else {
             // Asks FileManager to be initialized and awaits the result of selected file
             Intent intent = new Intent(this, FileManager.class);
-
             startActivityForResult(intent, 1234);
         }
 
     }
-
 
 
     /**
@@ -424,82 +308,57 @@ public class MainActivity extends AppCompatActivity implements AppBarConfigurati
     {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if (requestCode == 3333) {
-            if(resultCode == Activity.RESULT_OK){
-                String result=data.getStringExtra("file");
-                Uri uri = Uri.parse(result);
-                selected_recording = uri;
-                Log.d(TAG, "Saved URI of selected recording:"+uri);
-                Microphone mic = new Microphone();
-                mic.classifyRecording(selected_recording.getPath(), this.getApplication().getApplicationContext());
+        switch(requestCode)
+        {
+//            case 3333:
+//                if(resultCode == Activity.RESULT_OK)
+//                {
+//                    String result=data.getStringExtra("file");
+//                    Uri uri = Uri.parse(result);
+//                    selected_recording = uri;
+//                    Log.d(TAG, "Saved URI of selected recording:"+uri);
+//
+//                    Microphone mic = new Microphone();
+//                    mic.classifyRecording(selected_recording.getPath(), this.getApplication().getApplicationContext());
+//
+//                    Log.e(TAG, "Creating Labels txt file!");
+//                    Toast.makeText(this, "Processing WAV File!", Toast.LENGTH_SHORT).show();
+//
+//
+//                }
+//                break;
 
-                Log.e(TAG, "Creating Labels txt file!");
-                Toast.makeText(this, "Processing WAV File!", Toast.LENGTH_SHORT).show();
-
-            }
-            if (resultCode == Activity.RESULT_CANCELED) {
-            }
-        }
-
-        //Receives the URI of selected file from FileManager class
-        if (requestCode == 1234) {
-            if(resultCode == Activity.RESULT_OK){
-                String result=data.getStringExtra("file");
-                Uri uri = Uri.parse(result);
-                selected_recording = uri;
-                Log.d(TAG, "Saved URI of selected recording:"+uri);
-                FragmentManager man = this.getSupportFragmentManager();
-                AudioPlayer audio_player = new AudioPlayer(selected_recording);
-                removeAllFragments();
-                man.beginTransaction().add(R.id.fragment_container_view, audio_player, "AUDIO PLAYER").commit();
-            }
-            if (resultCode == Activity.RESULT_CANCELED) {
-                // there's no result
-            }
-        }
-
-        if (requestCode == 5678) {
-            if(resultCode == Activity.RESULT_OK){
-                String result=data.getStringExtra("file");
-                Log.d(TAG, "Received Intent URI:"+ result);
-                Uri uri = Uri.parse(result);
-
-                Log.d(TAG, "Saved PATH of selected recording:"+result);
-
-                FragmentManager man = this.getSupportFragmentManager();
-                FileManager fm = new FileManager(this);
-                try {
-                    ArrayList<String> predicted_chords =
-                            fm.readFromLabelsFile(uri);
-                    String predicted_tablature = ChordToTab.convertStringChords(predicted_chords);
-                    TablatureFragment tab_frag = new TablatureFragment(predicted_tablature);
-
-                    removeAllFragments();
-
-                    man.beginTransaction().add(R.id.fragment_container_view, tab_frag, "TABLATURE").commit();
-                }catch(Exception e) {
-                    e.printStackTrace();
+            //Receives the URI of selected file from FileManager class
+            //Plays the file received from the FileManager
+            case 1234:
+                if(resultCode == Activity.RESULT_OK)
+                {
+//                    String result=data.getStringExtra("file");
+//                    Uri uri = Uri.parse(result);
+//                    selected_recording = uri;
+//                    Log.d(TAG, "Saved URI of selected recording:"+uri);
+//                    FragmentManager man = this.getSupportFragmentManager();
+//                    AudioPlayer audio_player = new AudioPlayer(selected_recording);
+//                    removeAllFragments();
+//                    man.beginTransaction().add(R.id.fragment_container_view, audio_player, "AUDIO PLAYER").commit();
                 }
-            }
-            if (resultCode == Activity.RESULT_CANCELED) {
-                //Write your code if there's no result
-            }
-        }
+                break;
 
-        if (requestCode == 3333) {
-            if(resultCode == Activity.RESULT_OK){
-                String result=data.getStringExtra("file");
-                Log.d(TAG, "Received Intent URI:"+ result);
-                Uri uri = Uri.parse(result);
-                selected_recording = uri;
+            case 3333:
+                if(resultCode == Activity.RESULT_OK)
+                {
+                    String result=data.getStringExtra("file");
+                    Log.d(TAG, "Received Intent URI:"+ result);
+                    Uri uri = Uri.parse(result);
+                    selected_recording = uri;
 
-                Log.d(TAG, "Saved PATH of selected recording:"+result);
+                    Log.d(TAG, "Saved PATH of selected recording:"+result);
 
-                Microphone mic = new Microphone();
-                mic.classifyRecording(uri.getPath(), this);
-                FragmentManager man = this.getSupportFragmentManager();
-                FileManager fm = new FileManager(this);
-                Toast.makeText(this, "Processing File", Toast.LENGTH_SHORT).show();
+                    Microphone mic = new Microphone();
+                    mic.classifyRecording(uri.getPath(), this);
+                    FragmentManager man = this.getSupportFragmentManager();
+                    FileManager fm = new FileManager(this);
+                    Toast.makeText(this, "Processing File", Toast.LENGTH_SHORT).show();
 //                try {
 //                    ArrayList<String> predicted_chords =
 //                            fm.readFromLabelsFile(uri);
@@ -513,11 +372,48 @@ public class MainActivity extends AppCompatActivity implements AppBarConfigurati
 //                }catch(Exception e) {
 //                    e.printStackTrace();
 //                }
-            }
-            if (resultCode == Activity.RESULT_CANCELED) {
-                //Write your code if there's no result
-            }
+                }
+
+                break;
+
+            case 5678:
+
+                if(resultCode == Activity.RESULT_OK)
+                {
+                    String result=data.getStringExtra("file");
+                    Log.d(TAG, "Received Intent URI:"+ result);
+                    Uri uri = Uri.parse(result);
+
+                    Log.d(TAG, "Saved PATH of selected recording:"+result);
+
+                    FragmentManager man = this.getSupportFragmentManager();
+                    FileManager fm = new FileManager(this);
+                    try
+                    {
+                        ArrayList<String> predicted_chords = fm.readFromLabelsFile(uri);
+                        String predicted_tablature = ChordToTab.convertStringChords(predicted_chords);
+                        TablatureFragment tab_frag = new TablatureFragment(predicted_tablature);
+
+//                    removeAllFragments();
+//                    man.beginTransaction().add(R.id.fragment_container_view, tab_frag, "TABLATURE").commit();
+                    }catch(Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+                break;
+
+
+            default:
+                break;
+
         }
+
+
+
+
+
+
+
     }
 
     /**

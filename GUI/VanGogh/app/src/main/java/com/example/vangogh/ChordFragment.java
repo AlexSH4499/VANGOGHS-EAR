@@ -47,7 +47,7 @@ public class ChordFragment extends Fragment
     private final int DIAGRAM_WIDTH = 200;
     private final int DIAGRAM_HEIGHT = 200;
 
-    public String currchord = "";
+    private String current_chord;
     private DatabaseView dbview;
     private AudioPlayer ap;
 
@@ -65,11 +65,15 @@ public class ChordFragment extends Fragment
 
     public ChordFragment(String chord)
     {
-        this.currchord = chord;
+        if(this.validateChord(chord))
+            this.current_chord = chord.toLowerCase();
+        else{
+            this.current_chord = "";
+        }
     }
 
     public ChordFragment() {
-
+        this.current_chord = "";//Default to empty
     }
 
     /**
@@ -117,7 +121,8 @@ public class ChordFragment extends Fragment
             }
 
         });
-        if(currchord.isEmpty()) {
+
+        if(current_chord.isEmpty()) {
             // Set callback listener for events on the update button
             update_btn.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -125,17 +130,17 @@ public class ChordFragment extends Fragment
 
                     if (validateChord(editText.getText().toString())) {
                         Log.d(TAG, "editText received: " + editText.getText().toString());
-                        currchord = editText.getText().toString();
-                        drawChords(currchord);
+                        current_chord = editText.getText().toString();
+                        drawChords(current_chord);
                         dbview = new DatabaseView();
                         try {
                           //getChordsmap() expects a lowercase key!
-                            ap = new AudioPlayer(dbview.getChordsmap().get(currchord.toLowerCase()), context);
+                            ap = new AudioPlayer(dbview.getChordsmap().get(current_chord.toLowerCase()), context);
 //                        Log.d(TAG, "audioplayer received: " + Uri.fromFile(chord));
                             if (ap != null && man.findFragmentByTag("AUDIO PLAYER IN CHORDS") == null)
                                 man.beginTransaction().add(R.id.new_audio_fragment_container_view, ap, "AUDIO PLAYER IN CHORDS").commit();/**/
                         } catch (Exception e) {
-                            Log.e(TAG, "Current Chord stored:" + currchord);
+                            Log.e(TAG, "Current Chord stored:" + current_chord);
                             e.printStackTrace();
                         }
 
@@ -148,19 +153,21 @@ public class ChordFragment extends Fragment
 
         else{
             //We were called with a chord as an argument
-            if(validateChord(currchord.toLowerCase()))
+            if(validateChord(current_chord))
             {
                 try{
-                    drawChords(currchord);
-                    ap = new AudioPlayer(dbview.getChordsmap().get(currchord.toLowerCase()), context);
+                    drawChords(current_chord);
+                    ap = new AudioPlayer(dbview.getChordsmap().get(current_chord.toLowerCase()), context);
                     if (ap != null && man.findFragmentByTag("AUDIO PLAYER IN CHORDS") == null)
                         man.beginTransaction().add(R.id.new_audio_fragment_container_view, ap, "AUDIO PLAYER IN CHORDS").commit();
 
                 }catch(Exception e)
                 {
-                    Log.e(TAG, "Current Chord stored:" + currchord);
+                    Log.e(TAG, "Current Chord stored:" + current_chord);
                     e.printStackTrace();
                 }
+            }else{
+                Log.e(TAG, "Invalid Chord:" + current_chord);
             }
         }
 
@@ -177,7 +184,7 @@ public class ChordFragment extends Fragment
     {
         FileManager fileManager = new FileManager(this.getActivity().getBaseContext().getApplicationContext());
 
-        return fileManager.getChordFile("g");
+        return fileManager.getChordFile("g");//defaults to G chord as we know it works
     }
 
 
@@ -202,11 +209,8 @@ public class ChordFragment extends Fragment
 
         chord_validator = new ChordValidator(valid_chords);
 
-        if(chord_validator.isValidChord(input_chord))
-            return true;
+        return (chord_validator.isValidChord(input_chord));
 
-
-        return false;
     }
 
 
@@ -254,6 +258,9 @@ public class ChordFragment extends Fragment
         this.drawChords(chordName, DIAGRAM_WIDTH, DIAGRAM_HEIGHT);
     }
 
+    public String getCurrentChord() {return this.current_chord;}
+
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data)
     {
@@ -297,7 +304,7 @@ public class ChordFragment extends Fragment
                 }
             }
             if (resultCode == Activity.RESULT_CANCELED) {
-                //Write your code if there's no result
+                //TODO: Handle Activity Cancelled Code
             }
         }
     }

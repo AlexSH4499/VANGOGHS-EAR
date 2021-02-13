@@ -1,12 +1,17 @@
 package com.example.vangogh;
 
+import android.Manifest;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.media.AudioAttributes;
 import android.media.MediaPlayer;
 
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.provider.Settings;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,6 +23,8 @@ import android.widget.SeekBar;
 import android.widget.Toast;
 
 
+import androidx.appcompat.app.AlertDialog;
+import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 
 /**
@@ -48,6 +55,9 @@ public class AudioPlayer extends Fragment {
     private static int one_time_only  = 0;
     private double start_time, final_time;
     private Context context;
+
+    private PermissionManager permissionManager;
+
     public AudioPlayer(Uri file)
     {
         handler = new Handler();
@@ -109,14 +119,49 @@ public class AudioPlayer extends Fragment {
         seekbar = (SeekBar)  view.findViewById(R.id.seekbar);
         seekbar.setClickable(false);
 
+        permissionManager = new PermissionManager(this.context);
+        PermissionManager.PermissionRequestListener listener = new PermissionManager.PermissionRequestListener()
+        {
+            @Override
+            public void onNeedPermission() {
+                requestPermissions(new String[]{ "READ_EXTERNAL_STORAGE"}, 1);
+            }
 
+            @Override
+            public void onPermissionPreviouslyDenied() {
+                showPlayerRational();
+            }
+
+            @Override
+            public void onPermissionPreviouslyDeniedWithNeverAskAgain() {
+                dialogForSettings("Permission Denied", "Now you must allow storage access from settings.");
+            }
+
+            @Override
+            public void onPermissionGranted() {
+                init();
+            }
+
+
+
+        };
+
+
+
+
+
+        return view;
+    }
+
+    private void init()
+    {
         if(idChecker) {
             player = MediaPlayer.create(this.getActivity().getBaseContext(), id);
         } else {
             player = MediaPlayer.create(this.getActivity().getBaseContext(),file);
         }
 
-    
+
 
         // Set callback listener for events on the update button
         play.setOnClickListener(new View.OnClickListener(){
@@ -126,7 +171,7 @@ public class AudioPlayer extends Fragment {
                 try {
                     if(player != null)
                         player.start();
-                     else {
+                    else {
                         Toast.makeText(getActivity().getBaseContext(), "Select A File Again!", Toast.LENGTH_SHORT).show();
                     }
 
@@ -168,10 +213,51 @@ public class AudioPlayer extends Fragment {
             }
 
         });
+    }
 
+    private void showPlayerRational() {
+        new AlertDialog.Builder(this.context).setTitle("Permission Denied").setMessage("Without this permission this app is unable to open storage to take play Audio. Are you sure you want to deny this permission.")
+                .setCancelable(false)
+                .setNegativeButton("I'M SURE", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                })
+                .setPositiveButton("RETRY", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                       requestPermissions( new String[]{"READ_EXTERNAL_STORAGE"}, 1);
+                        dialog.dismiss();
+                    }
+                }).show();
 
+    }
 
-        return view;
+    private void goToSettings() {
+        Intent intent = new Intent();
+        intent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+        Uri uri = Uri.parse("package:" + this.context.getPackageName());
+        intent.setData(uri);
+        startActivity(intent);
+    }
+
+    private void dialogForSettings(String title, String msg) {
+        new AlertDialog.Builder(this .context).setTitle(title).setMessage(msg)
+                .setCancelable(false)
+                .setNegativeButton("NOT NOW", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                })
+                .setPositiveButton("SETTINGS", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        goToSettings();
+                        dialog.dismiss();
+                    }
+                }).show();
     }
 
     /**
@@ -194,6 +280,25 @@ public class AudioPlayer extends Fragment {
 
         super.onDestroy();
         if (player != null) player.release();
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions,  int[] grantResults)
+    {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        switch (requestCode) {
+            case 1: {
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+//                    openCamera();
+                    //Allow player to be used
+                } else {
+                    // Permission was denied.......
+                    Toast.makeText(this.getActivity().getBaseContext(), "Permission Denied", Toast.LENGTH_SHORT).show();
+                }
+                break;
+            }
+
+        }
     }
 
 }

@@ -251,6 +251,15 @@ def sample_plot():
     waveform=get_waveform("C:\\Users\\johnm\\git\\VANGOGHS-EAR\\Music_Analysis\\ML\\sample\\a.wav")
     plot_audio(waveform, spectrogram=get_spectrogram(waveform))
 
+
+def load_saved_model():
+
+    model = create_model()
+    model.load_weights('')
+
+    return
+
+
 def main():
     create_model()
     # sample_plot()

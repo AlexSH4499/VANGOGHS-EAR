@@ -4,9 +4,9 @@
     android:id="@+id/drawer_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#ffffff"
     xmlns:tools="http://schemas.android.com/tools"
     tools:context=".MainActivity">
-
 
 
 
@@ -14,108 +14,30 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-                <com.google.android.material.appbar.AppBarLayout
-                    android:background="@color/colorPrimary"
+                <include
+                    layout="@layout/toolbar"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"/>
 
-
-                        <com.google.android.material.appbar.MaterialToolbar
-                            android:id="@+id/topAppBar"
-                            android:layout_width="match_parent"
-                            android:layout_height="40dp"
-                            app:menu="@menu/top_app_bar"
-                            app:navigationIcon="@drawable/ic_nav_bar"
-                            app:title="Main Menu"
-                            app:titleTextColor="@color/white" />
-
-                        <androidx.fragment.app.FragmentContainerView
-                            android:id="@+id/nav_host_fragment"
-                            android:layout_height="wrap_content"
-                            android:layout_width="wrap_content" >
-
-
-
-                        </androidx.fragment.app.FragmentContainerView>
-
-
-
-
-                </com.google.android.material.appbar.AppBarLayout>
 
                 <FrameLayout
-                    android:id="@+id/fragment_container_view"
-                    android:layout_width="400dp"
-                    android:layout_height="400dp"
-                    android:layout_alignParentEnd="true"
-                    android:layout_alignParentBottom="true"
-                    android:layout_marginEnd="19dp"
-                    android:layout_marginBottom="3dp"
-                    android:orientation="horizontal" >
-
-
-                </FrameLayout>
-
-                <FrameLayout
-
-                    android:id="@+id/audio_fragment_container_view"
-                    android:layout_width="240dp"
-                    android:layout_height="199dp"
-                    android:layout_alignParentEnd="true"
-                    android:layout_marginEnd="29dp"
-                    android:layout_marginBottom="44dp"
-                    android:orientation="horizontal" />
-
-                <ToggleButton
-                    android:id="@+id/toggle_frags"
-                    android:layout_width="118dp"
-                    android:layout_height="69dp"
-                    android:layout_above="@+id/fragment_container_view"
-                    android:layout_marginBottom="46dp"
-                    android:textOff="Tablature"
-                    android:textOn="Chord Diagram" />
-
-                <ToggleButton
-                    android:id="@+id/record_show_button"
-                    android:layout_width="112dp"
-                    android:layout_height="72dp"
-
-                    android:layout_above="@+id/toggle_frags"
-                    android:layout_marginBottom="8dp"
-                    android:textOff="Record"
-                    android:textOn="Hide" />
-
-                <Button
-                    android:id="@+id/find_button"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_above="@+id/record_show_button"
-                    android:layout_marginBottom="10dp"
-                    android:text="Select File" />
-
-                <RelativeLayout
-                    android:id="@+id/fragment_layout"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content">
-
-
-
-
-                </RelativeLayout>
-
-                <!-- <Button
-                    android:id="@+id/analyze_audio_button"
-                    android:layout_width="112dp"
-                    android:layout_height="72dp"
-
-
-                    android:layout_alignParentBottom="true"
-                    android:layout_marginBottom="371dp"
-                    android:text="Analyze" /> -->
+                    android:id="@+id/flContent"
+                    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
 
 
         </RelativeLayout>
 
+
+        <com.google.android.material.navigation.NavigationView
+            android:id="@+id/nvView"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="start"
+            android:background="#7FC5DC"
+            app:headerLayout="@layout/nav_header"
+            app:menu="@menu/drawer_view" />
 
 </androidx.drawerlayout.widget.DrawerLayout>
 

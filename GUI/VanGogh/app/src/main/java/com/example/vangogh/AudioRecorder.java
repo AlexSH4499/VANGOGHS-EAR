@@ -83,7 +83,7 @@ public class AudioRecorder extends Fragment
         String res;
         if(nonEmptyString(filename)) {
 
-            context = this.getContext();
+//            context = this.getContext();
             res = this.OutputFilePath(filename, "3gp");
         }
         else{
@@ -151,7 +151,8 @@ public class AudioRecorder extends Fragment
         view = inflater.inflate(R.layout.audio_recorder_fragment, container , false);
 
         microphone_button = (Button) view.findViewById(R.id.microphone_button);
-        microphone_button.setOnClickListener(new View.OnClickListener(){
+        microphone_button.setOnClickListener(new View.OnClickListener()
+        {
             @Override
             public void onClick(View v)
             {
@@ -160,13 +161,16 @@ public class AudioRecorder extends Fragment
                     case 0:
                         mic = new Microphone();
                         microphone_button.setText("Stop");
-                        try {
+
+                        try
+                        {
                             Log.d(TAG, "Button clicks:"+mic_button_clicks);
                             mic.start_recording_wav();
                             Toast.makeText(getActivity(), "Starting Mic Recording", Toast.LENGTH_SHORT).show();
                             start_time = SystemClock.elapsedRealtime();
                             handler.postDelayed(Timer,100);
-                            if(setText) {
+                            if(setText)
+                            {
                                 mic.stop_recording_wav(context);
                                 microphone_button.setText("Start");
                             }
@@ -180,12 +184,14 @@ public class AudioRecorder extends Fragment
                     case 1:
                         microphone_button.setText("Start");
 
-                        try {
+                        try
+                        {
                             Log.d(TAG, "Button clicks:"+mic_button_clicks);
                             mic.stop_recording_wav(context);
                             FragmentManager frag_man = getParentFragmentManager();
-                            Fragment frag = frag_man.findFragmentById(R.id.fragment_container_view);
+                            Fragment frag = frag_man.findFragmentById(R.id.nav_third_fragment);
                             Intent intent = new Intent();
+
                             if(frag != null)
                             {
                                 //Chords is present then
@@ -194,12 +200,9 @@ public class AudioRecorder extends Fragment
                                 Uri uri = Uri.fromFile(new File(mic.getLabelsFilePath()));
                                 ArrayList<String> labels = fm.readFromLabelsFile(uri);
                                 Log.e(TAG, "Current Read Label:"+ Arrays.toString(new String[labels.size()]));
-                                frag_man.beginTransaction().add(R.id.fragment_container_view, new ChordFragment(labels.get(0)) , "CHORDS").commit();
-
+                                frag_man.beginTransaction().add(R.id.nav_third_fragment, new ChordFragment(labels.get(0)) , "CHORDS").commit();
                             }
-
-
-                        }catch  (Exception e)
+                        } catch  (Exception e)
                         {
                             e.printStackTrace();
                             Log.e(TAG, "Error stopping MediaRecorder");
@@ -209,14 +212,15 @@ public class AudioRecorder extends Fragment
                         break;
 
                     default:
-                        try {
+                        try
+                        {
                             Log.e(TAG, "Unexpected value for Mic Button clicks:"+mic_button_clicks);
                             microphone_button.setText("Start");
-                        }catch(Exception e) {
+                        } catch(Exception e) {
                             Log.e(TAG, "Tried to stop/reset unavailable MediaRecorder!");
                             e.printStackTrace();
-
                         }
+
                         mic_button_clicks = (mic_button_clicks + 1) % MAX_RECORD_BTN_CLICKS;
                         break;
 
@@ -249,14 +253,18 @@ public class AudioRecorder extends Fragment
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults)
+    {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        switch (requestCode){
+        switch (requestCode)
+        {
             case REQUEST_RECORD_AUDIO:
                 permissionToRecordAccepted  = grantResults[0] == PackageManager.PERMISSION_GRANTED;
                 break;
         }
-        if (!permissionToRecordAccepted ) {
+
+        if (!permissionToRecordAccepted )
+        {
             Log.e(TAG, "Error: Permission not granted to record");
             System.exit(1);
         }
@@ -265,31 +273,33 @@ public class AudioRecorder extends Fragment
 
     private Runnable Timer = new Runnable() {
         @Override
-        public void run() {
-            if(SystemClock.elapsedRealtime() - start_time >= 300000) {
+        public void run()
+        {
+            if(SystemClock.elapsedRealtime() - start_time >= 300000)
+            {
                 setText = true;
                 mic.stop_recording_wav(context);
                 microphone_button.setText("Start");
                 FragmentManager frag_man = getParentFragmentManager();
-                Fragment frag = frag_man.findFragmentById(R.id.fragment_container_view);
-                Intent intent = new Intent();
-                if(frag != null)
-                {
-                    //TODO: Fix this so we can see the first label inside the ChordFragment view
-                    //Chords is present then
-                    //Open file and feed it
-                    FileManager fm = new FileManager(getActivity());
-                    Uri uri = Uri.fromFile(new File(mic.getLabelsFilePath()));
-                    ArrayList<String> labels = null;
-                    try {
-                        labels = fm.readFromLabelsFile(uri);
-                    } catch (FileNotFoundException e) {
-                        e.printStackTrace();
-                    }
-                    Log.e(TAG, "Current Read Label:"+ Arrays.toString(new String[labels.size()]));
-                    frag_man.beginTransaction().add(R.id.fragment_container_view, new ChordFragment(labels.get(0)) , "CHORDS").commit();
-
-                }
+//                Fragment frag = frag_man.findFragmentById(R.id.fragment_container_view);
+//                Intent intent = new Intent();
+//                if(frag != null)
+//                {
+//                    //TODO: Fix this so we can see the first label inside the ChordFragment view
+//                    //Chords is present then
+//                    //Open file and feed it
+//                    FileManager fm = new FileManager(getActivity());
+//                    Uri uri = Uri.fromFile(new File(mic.getLabelsFilePath()));
+//                    ArrayList<String> labels = null;
+//                    try {
+//                        labels = fm.readFromLabelsFile(uri);
+//                    } catch (FileNotFoundException e) {
+//                        e.printStackTrace();
+//                    }
+//                    Log.e(TAG, "Current Read Label:"+ Arrays.toString(new String[labels.size()]));
+////                    frag_man.beginTransaction().add(R.id.fragment_container_view, new ChordFragment(labels.get(0)) , "CHORDS").commit();
+//
+//                }
             }
 
         }

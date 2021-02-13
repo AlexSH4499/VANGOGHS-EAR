@@ -65,7 +65,7 @@ def  decode_audio(audio_binary):
     audio, _  = tf.audio.decode_wav(audio_binary)
     return tf.squeeze(audio, axis=-1)
 
-def detect_chord_name(str_filename):
+# def detect_chord_name(str_filename):
 
 
 def get_label(file_path):
@@ -177,6 +177,7 @@ def init_training():
     hist = train_model(train_ds, val_ds,model, )
 
     plot_model_loss(hist)
+    save_model(model)
 
 def test_one_file():
 
@@ -219,9 +220,35 @@ def confusion_matrix(model, labels,y_true,y_pred):
     plt.ylabel('Label')
     plt.show()
 
+def save_model(model):
+    model.save_weights(setup()/'./checkpoints/latest-checkpoint')
+    return
+
+def load_model(model):
+    model.load_weights(setup()/'./checkpoints/latest-checkpoint')
+    return model
+
+def continue_training():
+    
+    train, val, test = divide_ds(files=chords_files())
+    train, val, test = filenames_to_tensor_slices(train),filenames_to_tensor_slices(val),filenames_to_tensor_slices(test),
+    train_ds = train.map(get_waveform_and_label, num_parallel_calls=AUTOTUNE)
+    train_ds = train_ds.map(get_spectrogram_and_label_id,num_parallel_calls=AUTOTUNE)
+    val_ds = preprocess_dataset(val)
+    test_ds = preprocess_dataset(test)
+
+    # in_shape = None
+    for  spectrogram, _ in train_ds.take(1):
+        in_shape = spectrogram.shape
+    model = chord_classifier_model(input_shape=in_shape)
+    model = load_model(model)
+    hist = train_model(train_ds, val_ds,model, )
+    save_model(model)
+    plot_model_loss(hist)
+
 def main():
-    # init_training()
-    test_one_file()
+    init_training()
+    # test_one_file()
     return
 
 if __name__ == "__main__":
