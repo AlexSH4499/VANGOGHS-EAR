@@ -24,7 +24,7 @@ android {
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-//        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+
     }
 
     buildTypes {
@@ -55,7 +55,7 @@ dependencies {
     implementation 'androidx.preference:preference:1.1.1'
     implementation 'com.google.android.material:material:1.1.0'
 
-    implementation 'org.jetbrains:annotations-java5:15.0'
+//    implementation 'org.jetbrains:annotations-java5:15.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.0.1'
     implementation files('libs\\jlibrosa-master\\jlibrosa-master\\binaries\\jlibrosa-1.0.2.jar')
     testImplementation 'org.junit.jupiter:junit-jupiter'
@@ -91,8 +91,6 @@ dependencies {
     testImplementation 'androidx.test.ext:junit:1.1.2'
 
     testImplementation 'androidx.test:core:1.2.0'
-    
-//    testImplementation 'androidx.test.espresso:espresso-core:3.3.0'
 
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     debugImplementation("androidx.fragment:fragment-testing:$fragment_version")
@@ -113,21 +111,5 @@ dependencies {
     androidTestImplementation("androidx.test:core:1.2.0")
     androidTestImplementation("androidx.test:rules:1.2.0")
     androidTestImplementation("androidx.test:runner:1.2.0")
-
-
-
-//    androidTestImplementation 'androidx.test.espresso:espresso-contrib:3.1.0'
-//    androidTestImplementation 'androidx.test.espresso:espresso-intents:3.1.0'
-//    androidTestImplementation 'androidx.test.espresso:espresso-accessibility:3.1.0'
-//    androidTestImplementation 'androidx.test.espresso:espresso-web:3.1.0'
-//    androidTestImplementation 'androidx.test.espresso.idling:idling-concurrent:3.1.0'
-
-    // The following Espresso dependency can be either "implementation"
-    // or "androidTestImplementation", depending on whether you want the
-    // dependency to appear on your APK's compile classpath or the test APK
-    // classpath.
-//    androidTestImplementation 'androidx.test.espresso:espresso-idling-resource:3.1.0'
-
-
 
 }

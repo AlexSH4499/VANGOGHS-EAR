@@ -46,3 +46,7 @@
         dirs 'libs'
     }
 }`
+
+> 
+> C:\Python\virtualenvs\python3.8\Scripts\Activate.ps1
+> 
