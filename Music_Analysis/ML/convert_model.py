@@ -44,7 +44,7 @@ def setup():
     return ROOT_DIR
 
 model_path = Path(setup())
-model_path = model_path / 'Saved_Model'
+model_path = model_path / 'New_Saved_Model'
 
 model_path = model_path/'chords_classifier_model'
 

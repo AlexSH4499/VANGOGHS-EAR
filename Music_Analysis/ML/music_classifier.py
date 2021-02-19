@@ -18,6 +18,12 @@ from tensorflow.keras import layers
 from tensorflow.keras import models
 
 ROOT_DIR = None
+AUTOTUNE = tf.data.experimental.AUTOTUNE
+
+ROOT_DIR = None
+
+EPOCHS = 10
+BATCHES = 64
 
 def setup():
     main_id = None
@@ -62,7 +68,7 @@ def chord_files(path=chords_paths(), chord_name='a'):
 
 
 def  decode_audio(audio_binary):
-    audio, _  = tf.audio.decode_wav(audio_binary)
+    audio, _  = tf.audio.decode_wav(audio_binary,desired_samples=16000, desired_channels=1)
     return tf.squeeze(audio, axis=-1)
 
 # def detect_chord_name(str_filename):
@@ -119,6 +125,14 @@ def waveform_to_spectrogram_ds(waveform_ds):
         spect = get_spectrogram(wv)
         yield label, spect
 
+def get_waveform_and_label(file_path):
+    label = get_label(file_path)
+    audio_binary = tf.io.read_file(file_path)
+    waveform = decode_audio(audio_binary)
+    print('Waveform shape:', waveform.shape)
+    print()
+    return waveform, label
+
 def get_spectrogram_and_label_id(audio, label, num_labels=10):
     spectrogram = get_spectrogram(audio)
     spectrogram = tf.expand_dims(spectrogram, -1)
@@ -126,7 +140,7 @@ def get_spectrogram_and_label_id(audio, label, num_labels=10):
     return spectrogram, label_id
 
 def divide_ds(files):
-    
+    files = [files]
     mid = len(files) // 2
     train = files[:mid-1]
     val = files[mid:mid//2 + mid -1]
@@ -163,7 +177,7 @@ def chord_classifier_model(input_shape, norm_layer=None, num_labels=10):
     return model
 
 def init_training():
-    train, val, test = divide_ds(files=chords_files())
+    train, val, test = divide_ds(files=chord_files())
     train, val, test = filenames_to_tensor_slices(train),filenames_to_tensor_slices(val),filenames_to_tensor_slices(test),
     train_ds = train.map(get_waveform_and_label, num_parallel_calls=AUTOTUNE)
     train_ds = train_ds.map(get_spectrogram_and_label_id,num_parallel_calls=AUTOTUNE)

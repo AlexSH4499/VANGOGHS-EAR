@@ -49,7 +49,8 @@ def setup():
     return ROOT_DIR
 
 def labels():
-    return np.array(['a','am','bm','c','d','dm','e','em','f','g'])
+    return ['a','am','bm','c','d','dm','e','em','f','g']
+    # return np.array(['a','am','bm','c','d','dm','e','em','f','g'])
 
 def get_label(file_path):
   parts = tf.strings.split(file_path, os.path.sep)
@@ -68,8 +69,8 @@ def chords_audio_filenames(chords_path = chords_audio_files_path()):
     print(chords_path)
     filenames = tf.io.gfile.glob(str(chords_path)+'/*/*')
     filenames = tf.random.shuffle(filenames)
-    print(filenames)
-    print('\n\n')
+    # print(filenames)
+    # print('\n\n')
     return filenames
 
 def split_files(files):
@@ -77,9 +78,9 @@ def split_files(files):
     return train, val, test
 
 def decode_audio(audio_binary):
-    audio, sample_rate = tf.audio.decode_wav(audio_binary,desired_samples=16000)
+    audio, sample_rate = tf.audio.decode_wav(audio_binary,desired_samples=16000,desired_channels=1)
 
-    print(audio.shape)
+    # print(audio.shape)
     return tf.squeeze(audio,axis=-1)
 
 def get_waveform(file_path):
@@ -91,8 +92,8 @@ def get_waveform_and_label(file_path):
     label = get_label(file_path)
     audio_binary = tf.io.read_file(file_path)
     waveform = decode_audio(audio_binary)
-    print('Waveform shape:', waveform.shape)
-    print()
+    # print('Waveform shape:', waveform.shape)
+    # print()
     return waveform, label
 
 def get_spectrogram(waveform):
@@ -100,9 +101,9 @@ def get_spectrogram(waveform):
 
     spectrogram = tf.signal.stft(waveform, frame_length=255, frame_step=128)
     spectrogram = tf.abs(spectrogram)
-    print('/n/n Waveform shape:', waveform.shape)
-    print('Spectrogram shape:', spectrogram.shape)
-    print()
+    # print('/n/n Waveform shape:', waveform.shape)
+    # print('Spectrogram shape:', spectrogram.shape)
+    # print()
     return spectrogram
 
 def get_spectrogram_and_label_id(audio, label):
@@ -143,8 +144,8 @@ def preprocess_dataset(files):
   output_ds = output_ds.map(
       get_spectrogram_and_label_id,  num_parallel_calls=AUTOTUNE)
 
-  for spectrogram, label_id in output_ds.take(len(output_ds)):
-      print("Spec Shape:",spectrogram.shape)
+#   for spectrogram, label_id in output_ds.take(len(output_ds)):
+#       print("Spec Shape:",spectrogram.shape)
   return output_ds
 
 def prepare_ds(debug=False):
@@ -175,8 +176,8 @@ def create_model():
     batch_size = BATCHES
     train_ds, val_ds, test_ds =  prepare_ds()
 
-    train_ds = train_ds.batch(BATCHES).cache().prefetch(AUTOTUNE)
-    val_ds = val_ds.batch(BATCHES).cache().prefetch(AUTOTUNE)
+    train_ds = train_ds.cache().prefetch(AUTOTUNE)
+    val_ds = val_ds.cache().prefetch(AUTOTUNE)
 
     for spec, _ in val_ds.take(1):
         input_shape = spec.shape
@@ -190,8 +191,9 @@ def create_model():
     print(f"Input Shape:{input_shape}\n Num Labels:{num_labels}\n Normalization Layer:{norm_layer}\n\n")
     model = audio_classifier_model(input_shape=input_shape, norm_layer=norm_layer, num_labels=num_labels)
     
-    model.summary()
+    # model.summary()
     history = fit(model, train_ds, val_ds)
+    save_model(model)
     return model
 
 
@@ -252,13 +254,32 @@ def sample_plot():
     plot_audio(waveform, spectrogram=get_spectrogram(waveform))
 
 
-def load_saved_model():
 
-    model = create_model()
-    model.load_weights('')
-
+def save_model(model):
+    model.save_weights(setup()/'./checkpoints/latest-checkpoint')
     return
 
+def load_model(model):
+    model.load_weights(setup()/'./checkpoints/latest-checkpoint')
+    return model
+
+def continue_training():
+    
+    train, val, test = divide_ds(files=chords_files())
+    train, val, test = filenames_to_tensor_slices(train),filenames_to_tensor_slices(val),filenames_to_tensor_slices(test),
+    train_ds = train.map(get_waveform_and_label, num_parallel_calls=AUTOTUNE)
+    train_ds = train_ds.map(get_spectrogram_and_label_id,num_parallel_calls=AUTOTUNE)
+    val_ds = preprocess_dataset(val)
+    test_ds = preprocess_dataset(test)
+
+    # in_shape = None
+    for  spectrogram, _ in train_ds.take(1):
+        in_shape = spectrogram.shape
+    model = chord_classifier_model(input_shape=in_shape)
+    model = load_model(model)
+    hist = train_model(train_ds, val_ds,model, )
+    save_model(model)
+    plot_model_loss(hist)
 
 def main():
     create_model()
