@@ -1,5 +1,5 @@
 package com.example.vangogh;
-import androidx.test.filters.LargeTest;
+//import androidx.test.filters.LargeTest;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -20,7 +20,7 @@ import static org.junit.Assert.assertEquals;
  */
 
 @RunWith(AndroidJUnit4.class)
-@LargeTest
+//@LargeTest
 public class AudioRecorderTest {
     AudioRecorder audio_rec;
 
