@@ -1,4 +1,4 @@
-#  [![MusicAnalysis](https://github.com/AlexSH4499/VANGOGHS_EAR/workflows/android_build.yml/badge.svg?branch=master)]
+#  MusicAnalysis ![master-branch](https://github.com/AlexSH4499/VANGOGHS-EAR/actions/workflows/android_build.yml/badge.svg?branch=master) ![testing-master-branch](https://github.com/AlexSH4499/VANGOGHS-EAR/actions/workflows/android_build.yml/badge.svg?branch=unittesting_master)
 > A project dedicated towards the visualization, analysis and feature extraction of Music using ML techniques.
 
 # Project Structure
