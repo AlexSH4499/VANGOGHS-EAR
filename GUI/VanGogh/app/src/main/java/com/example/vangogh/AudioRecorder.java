@@ -72,15 +72,16 @@ public class AudioRecorder extends Fragment
     //Button for binding with the XML Button
     Button microphone_button;
 
+
     /**
      * Generates the Output File Path for the Audio Recorder to store recorded audio.
      *
      * @param filename the name of the file to be created for storing the recorded audio.
      * @return String representation of the Output File Path.
      */
-    protected String OutputFilePath(String filename)
+    public String OutputFilePath(String filename)
     {
-        String res;
+        String res="";
         if(nonEmptyString(filename)) {
 
 //            context = this.getContext();

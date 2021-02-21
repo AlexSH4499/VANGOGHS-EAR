@@ -46,11 +46,10 @@ repositories{
 //    mavenCentral()
 }
 
-
 dependencies {
 
-    implementation 'com.android.support:appcompat-v7:28.0.0'
-    implementation 'com.android.support:design:28.0.0'
+    implementation 'androidx.appcompat:appcompat:1.0.0'
+    implementation 'com.google.android.material:material:1.0.0'
 
     implementation 'com.kailashdabhi:om-recorder:1.1.5'
     implementation 'androidx.preference:preference:1.1.1'
@@ -94,26 +93,18 @@ dependencies {
 
     //test dependencies
     implementation 'org.jetbrains:annotations-java5:15.0'
+
+    //Junit dependencies
     testImplementation 'junit:junit:4.12'
-    testImplementation 'androidx.test.ext:junit:1.1.2'
 
-    testImplementation 'androidx.test:core:1.2.0'
-
-//    androidTestImplementation 'com.android.support.test:runner:1.0.2'
-//    debugImplementation("androidx.fragment:fragment-testing:$fragment_version")
-//            {
-//                exclude group: 'androidx.test', module: 'core'
-//            }
-//    debugImplementation("androidx.fragment:fragment-testing:1.1.0-beta01")
-//    debugImplementation("androidx.fragment:fragment-ktx:1.1.0-beta01")
 
     // Espresso dependencies
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
 
-    androidTestImplementation('androidx.test.ext:junit:1.1.2')
-    androidTestImplementation 'androidx.test.ext:truth:1.2.0'
-//    androidTestImplementation 'com.google.truth:truth:0.42'
+//    androidTestImplementation('androidx.test.ext:junit:1.1.2')
 
+
+    //Android JUnit
     androidTestImplementation 'androidx.test:core-ktx:1.2.0'
     androidTestImplementation("androidx.test:core:1.2.0")
     androidTestImplementation("androidx.test:rules:1.2.0")
