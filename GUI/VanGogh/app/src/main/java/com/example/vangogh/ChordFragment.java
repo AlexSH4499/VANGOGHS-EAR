@@ -19,6 +19,7 @@ import android.widget.Toast;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
+import com.dqt.libs.chorddroid.classes.Chord;
 import com.dqt.libs.chorddroid.helper.DrawHelper;
 
 import java.io.BufferedReader;
@@ -48,6 +49,7 @@ public class ChordFragment extends Fragment
     private final int DIAGRAM_HEIGHT = 200;
 
     private String current_chord;
+    private ArrayList<String> current_chords;
     private DatabaseView dbview;
     private AudioPlayer ap;
 
@@ -56,7 +58,7 @@ public class ChordFragment extends Fragment
     private ChordValidator chord_validator;
 
     //GUI Components for binding the Frontend
-    Button update_btn, load_btn;
+    Button update_btn, load_btn,next_chord_btn;
     View view;
     ImageView chord_view;
     EditText editText;
@@ -65,15 +67,41 @@ public class ChordFragment extends Fragment
 
     public ChordFragment(String chord)
     {
-        if(this.validateChord(chord))
+        if(this.validateChord(chord)) {
             this.current_chord = chord.toLowerCase();
+            this.current_chords = new ArrayList<>();
+//            this.current_chords.add(this.current_chord);
+        }
         else{
             this.current_chord = "";
         }
     }
 
+    public ChordFragment(ArrayList<String> chords)
+    {
+        for(String chord : chords) {
+            if(this.validateChord(chord)) {
+                this.current_chord = chord.toLowerCase();
+//                this.current_chords = new ArrayList<>();
+                this.current_chords.add(this.current_chord);
+            }
+
+        }
+
+        if(this.current_chords.size() == 0)
+            this.current_chord = "";
+        else
+        {
+            this.current_chord = current_chords.get(0);
+        }
+
+
+
+    }
+
+
     public ChordFragment() {
-        this.current_chord = "";//Default to empty
+        this.current_chords =new ArrayList<>() ;current_chord = "";//Default to empty
     }
 
     /**
@@ -110,8 +138,43 @@ public class ChordFragment extends Fragment
         load_btn = (Button) view.findViewById(R.id.load_chords);
         chord_view = (ImageView) view.findViewById(R.id.chord_view);
 
+        next_chord_btn = (Button) view.findViewById(R.id.next_chord_button);
+
 
         final FragmentManager man = this.getActivity().getSupportFragmentManager();
+
+        next_chord_btn.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v)
+            {
+               //update the current chord
+                if(current_chords.size() > 0)
+                {
+                    current_chord = current_chords.get(0);
+                    current_chords.remove(0);
+                }
+
+                if (validateChord(current_chord)) {
+                    Log.d(TAG, "Current chord received: " + current_chord);
+//                    current_chord = editText.getText().toString();
+                    drawChords(current_chord);
+                    dbview = new DatabaseView();
+                    try {
+                        //getChordsmap() expects a lowercase key!
+                        ap = new AudioPlayer(dbview.getChordsmap().get(current_chord.toLowerCase()), context);
+//                        Log.d(TAG, "audioplayer received: " + Uri.fromFile(chord));
+                        if (ap != null && man.findFragmentByTag("AUDIO PLAYER IN CHORDS") == null)
+                            man.beginTransaction().add(R.id.new_audio_fragment_container_view, ap, "AUDIO PLAYER IN CHORDS").commit();/**/
+                    } catch (Exception e) {
+                        Log.e(TAG, "Current Chord stored:" + current_chord);
+                        e.printStackTrace();
+                    }
+
+                }
+                editText.setText("");
+            }
+        });
+
 
         load_btn.setOnClickListener(new View.OnClickListener(){
             @Override
@@ -295,8 +358,15 @@ public class ChordFragment extends Fragment
                 try {
                     ArrayList<String> predicted_chords = fm.readFromLabelsFile(uri);
                     if(predicted_chords.size() > 0) {
-                        Log.e(TAG,"Passing in Draw:"+predicted_chords.get(0));
-                        this.drawChords(predicted_chords.get(0));
+                        //first we need to empty the current list
+                        this.current_chords.clear();//TODO: Implement this with streams/generators instead
+                        for(String chord : predicted_chords)
+                        {
+                            if(validateChord(chord))
+                                this.current_chords.add(chord);
+                        }
+//                        Log.e(TAG,"Passing in Draw:"+predicted_chords.get(0));
+                        this.drawChords(this.current_chords.get(0));
                     }
 
                 }catch(Exception e) {
