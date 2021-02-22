@@ -38,7 +38,7 @@ public class DatabaseView extends Activity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.database_layout);
-        microphone = new Microphone();
+        microphone = new Microphone(this.getApplicationContext());
         myMusic = new MusicDataBase(this);
         editSongName = (EditText) findViewById(R.id.editTextTextSongName);
 
@@ -96,8 +96,9 @@ public class DatabaseView extends Activity {
             @Override
             public void onClick(View v) {
                 //TODO Test this
-                File filetoDelete = new File(microphone.getLabelsDirectoryFilePath() + "/" + editSongName.getText().toString() + ".wav");
-                File tablaturetoDelete = new File(microphone.getLabelsFilePath() + "/" + editSongName.getText().toString() + ".txt");
+                FileManager fileManager = new FileManager();
+                File filetoDelete = new File(fileManager.getLabelsDirectoryFilePath() + "/" + editSongName.getText().toString() + ".wav");
+                File tablaturetoDelete = new File(fileManager.getLabelsFilePath() + "/" + editSongName.getText().toString() + ".txt");
                 boolean deleted = filetoDelete.delete();
                 boolean deleted2 = tablaturetoDelete.delete();
                 Integer delRows = myMusic.deleteData(editSongName.getText().toString());

@@ -357,7 +357,7 @@ public class MainActivity extends AppCompatActivity implements AppBarConfigurati
 
                     Log.d(TAG, "Saved PATH of selected recording:"+result);
 
-                    Microphone mic = new Microphone();
+                    Microphone mic = new Microphone(this.getApplicationContext());
                     mic.classifyRecording(uri.getPath(), this);
                     FragmentManager man = this.getSupportFragmentManager();
                     FileManager fm = new FileManager(this);

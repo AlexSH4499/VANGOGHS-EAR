@@ -159,7 +159,7 @@ public class AudioRecorder extends Fragment
                 switch(mic_button_clicks)
                 {
                     case 0:
-                        mic = new Microphone();
+                        mic = new Microphone(context);
                         microphone_button.setText("Stop");
 
                         try
@@ -197,7 +197,7 @@ public class AudioRecorder extends Fragment
                                 //Chords is present then
                                 //Open file and feed it
                                 FileManager fm = new FileManager(getActivity());
-                                Uri uri = Uri.fromFile(new File(mic.getLabelsFilePath()));
+                                Uri uri = Uri.fromFile(new File(fm.getLabelsFilePath()));
                                 ArrayList<String> labels = fm.readFromLabelsFile(uri);
                                 Log.e(TAG, "Current Read Label:"+ Arrays.toString(new String[labels.size()]));
                                 frag_man.beginTransaction().add(R.id.nav_third_fragment, new ChordFragment(labels.get(0)) , "CHORDS").commit();
