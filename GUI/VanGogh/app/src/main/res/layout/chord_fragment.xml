@@ -47,6 +47,16 @@
         android:layout_marginBottom="60dp"
         android:text="Load" />
 
+    <Button
+        android:id="@+id/next_chord_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/chord_view"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="42dp"
+        android:layout_marginBottom="33dp"
+        android:text="next" />
+
     <FrameLayout
         android:id="@+id/new_audio_fragment_container_view"
         android:layout_width="wrap_content"

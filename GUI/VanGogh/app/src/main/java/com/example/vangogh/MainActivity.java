@@ -10,6 +10,7 @@ import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Bundle;
 
+import android.util.ArrayMap;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
@@ -141,45 +142,70 @@ public class MainActivity extends AppCompatActivity implements AppBarConfigurati
                     }});
     }
 
+    private Map<Integer, String> fragmentMenuMap()
+    {
+        Map<Integer, String> fragments = new ArrayMap();
+
+        fragments.put(R.id.nav_first_fragment, "CHORD");
+        fragments.put(R.id.nav_second_fragment, "TABLATURE");
+        fragments.put(R.id.nav_third_fragment, "AUDIO RECORDER");
+
+        return fragments;
+    }
+
+
     public void selectDrawerItem(MenuItem menuItem) {
 
         // Create a new fragment and specify the fragment to show based on nav item clicked
-        Fragment fragment = null;
-        Class fragmentClass;
+//        Fragment fragment = null;
+        String frag = fragmentMenuMap().get(menuItem.getItemId());
+        Fragment fragment = FragmentFactory.createFragment(frag);
+//        Class fragmentClass;
 
-        switch(menuItem.getItemId()) {
-            case R.id.nav_first_fragment:
-                fragmentClass = ChordFragment.class;
-                break;
-            case R.id.nav_second_fragment:
-                fragmentClass = TablatureFragment.class;
-                break;
-            case R.id.nav_third_fragment:
-                fragmentClass = AudioRecorder.class;
-                break;
-            default:
-                fragmentClass = AudioRecorder.class;
-                break;
-        }
 
-        try {
-            fragment = (Fragment) fragmentClass.newInstance();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+
+//        switch(menuItem.getItemId()) {
+//            case R.id.nav_first_fragment:
+//                fragmentClass = ChordFragment.class;
+//                break;
+//            case R.id.nav_second_fragment:
+//                fragmentClass = TablatureFragment.class;
+//                break;
+//            case R.id.nav_third_fragment:
+//                fragmentClass = AudioRecorder.class;
+//                break;
+//            default:
+//                fragmentClass = AudioRecorder.class;
+//                break;
+//        }
+//
+//        try {
+//            fragment = (Fragment) fragmentClass.newInstance();
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
 
         // Insert the fragment by replacing any existing fragment
         FragmentManager fragmentManager = getSupportFragmentManager();
-        fragmentManager.beginTransaction().replace(R.id.flContent, fragment).commit();
 
-        // Highlight the selected item has been done by NavigationView
-        menuItem.setChecked(true);
+        if(fragment != null)
+        {
+            fragmentManager.beginTransaction().replace(R.id.flContent, fragment).commit();
+            // Highlight the selected item has been done by NavigationView
+            menuItem.setChecked(true);
 
-        // Set action bar title
-        setTitle(menuItem.getTitle());
+            // Set action bar title
+            setTitle(menuItem.getTitle());
 
-        // Close the navigation drawer
-        mDrawer.closeDrawers();
+            // Close the navigation drawer
+            mDrawer.closeDrawers();
+
+        }
+        else{
+            Log.e(TAG, "[@] ERROR: Received null Fragment from Fragment Factory!");
+        }
+
+
     }
 
     @Override
@@ -236,7 +262,8 @@ public class MainActivity extends AppCompatActivity implements AppBarConfigurati
             return;
         }
 
-        else {
+        else { //We're expecting the user to pick a File for processing
+
             // Asks FileManager to be initialized and awaits the result of selected file
             Intent intent = new Intent(this, FileManager.class);
             startActivityForResult(intent, 1234);
@@ -362,6 +389,8 @@ public class MainActivity extends AppCompatActivity implements AppBarConfigurati
                     FragmentManager man = this.getSupportFragmentManager();
                     FileManager fm = new FileManager(this);
                     Toast.makeText(this, "Processing File", Toast.LENGTH_SHORT).show();
+
+                    //TODO: Add Tablature Fragment when selecting a saved Tablature!
 //                try {
 //                    ArrayList<String> predicted_chords =
 //                            fm.readFromLabelsFile(uri);

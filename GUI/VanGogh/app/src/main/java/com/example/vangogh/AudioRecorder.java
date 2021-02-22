@@ -50,7 +50,7 @@ public class AudioRecorder extends Fragment
 
     // Variables for auto-stopping recording
     private Handler handler;
-    private float start_time;
+    private float start_time = Float.MIN_VALUE;//set it to a default absurd value
     private boolean setText = false;
 
     // String used to store the File being recorded from Mic
@@ -200,7 +200,8 @@ public class AudioRecorder extends Fragment
                                 Uri uri = Uri.fromFile(new File(fm.getLabelsFilePath()));
                                 ArrayList<String> labels = fm.readFromLabelsFile(uri);
                                 Log.e(TAG, "Current Read Label:"+ Arrays.toString(new String[labels.size()]));
-                                frag_man.beginTransaction().add(R.id.nav_third_fragment, new ChordFragment(labels.get(0)) , "CHORDS").commit();
+//                                frag_man.beginTransaction().add(R.id.nav_third_fragment, new ChordFragment(labels.get(0)) , "CHORDS").commit();
+                                frag_man.beginTransaction().add(R.id.nav_third_fragment, new ChordFragment(labels) , "CHORDS").commit();
                             }
                         } catch  (Exception e)
                         {
@@ -265,7 +266,7 @@ public class AudioRecorder extends Fragment
 
         if (!permissionToRecordAccepted )
         {
-            Log.e(TAG, "Error: Permission not granted to record");
+            Log.e(TAG, "Error: Permission to RECORD AUDIO not granted to record");
             System.exit(1);
         }
 
@@ -281,25 +282,25 @@ public class AudioRecorder extends Fragment
                 mic.stop_recording_wav(context);
                 microphone_button.setText("Start");
                 FragmentManager frag_man = getParentFragmentManager();
-//                Fragment frag = frag_man.findFragmentById(R.id.fragment_container_view);
+                Fragment frag = frag_man.findFragmentById(R.id.fragment_container_view);//TODO: Might cause a bug, be sure to remove it!
 //                Intent intent = new Intent();
-//                if(frag != null)
-//                {
-//                    //TODO: Fix this so we can see the first label inside the ChordFragment view
-//                    //Chords is present then
-//                    //Open file and feed it
-//                    FileManager fm = new FileManager(getActivity());
-//                    Uri uri = Uri.fromFile(new File(mic.getLabelsFilePath()));
-//                    ArrayList<String> labels = null;
-//                    try {
-//                        labels = fm.readFromLabelsFile(uri);
-//                    } catch (FileNotFoundException e) {
-//                        e.printStackTrace();
-//                    }
-//                    Log.e(TAG, "Current Read Label:"+ Arrays.toString(new String[labels.size()]));
-////                    frag_man.beginTransaction().add(R.id.fragment_container_view, new ChordFragment(labels.get(0)) , "CHORDS").commit();
-//
-//                }
+                if(frag == null)
+                {
+                    //TODO: Fix this so we can see the first label inside the ChordFragment view
+                    //Chords is present then
+                    //Open file and feed it
+                    FileManager fm = new FileManager(getActivity());
+                    Uri uri = Uri.fromFile(new File(fm.getLabelsFilePath()));
+                    ArrayList<String> labels = null;
+                    try {
+                        labels = fm.readFromLabelsFile(uri);
+                    } catch (FileNotFoundException e) {
+                        e.printStackTrace();
+                    }
+                    Log.e(TAG, "Current Read Label:"+ Arrays.toString(new String[labels.size()]));
+                    frag_man.beginTransaction().add(R.id.fragment_container_view, new ChordFragment(labels.get(0)) , "CHORDS").commit();
+
+                }
             }
 
         }
