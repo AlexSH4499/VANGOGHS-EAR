@@ -118,6 +118,9 @@ public class MainActivity extends AppCompatActivity implements AppBarConfigurati
         nvDrawer = (NavigationView) findViewById(R.id.nvView);
         setupDrawerContent(nvDrawer);
 
+
+        preparePermissions();
+        requestPermissions();
     }
 
     private ActionBarDrawerToggle setupDrawerToggle()

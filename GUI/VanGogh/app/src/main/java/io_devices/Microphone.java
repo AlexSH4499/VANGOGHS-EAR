@@ -81,6 +81,11 @@ public class Microphone implements Device
 
     private String output = "";
 
+    /**
+     * Credits to Vasanthkumar Velayudham for his tutorial:
+     * Where I got classes incorporated here for WAV files
+     * https://github.com/VVasanth/Android---Music-Genre-Classifier/
+     */
     public Microphone()
     {
         try{
@@ -93,7 +98,17 @@ public class Microphone implements Device
     }
 
         if(directory.exists()){
-            int count = directory.listFiles().length;
+            int count = 0;
+            if(directory.listFiles() != null)
+                 count = directory.listFiles().length;
+            output = Environment.getExternalStorageDirectory().getAbsolutePath() + "/audiorecorder/recordings/recording"+count+".mp3";
+        }else
+        {
+            directory.mkdirs();
+
+            int count = 0;
+            if(directory.listFiles() != null)
+                count = directory.listFiles().length;
             output = Environment.getExternalStorageDirectory().getAbsolutePath() + "/audiorecorder/recordings/recording"+count+".mp3";
         }
 
@@ -111,6 +126,7 @@ public class Microphone implements Device
      */
     public Microphone(String file_path)
     {
+
         Log.d(TAG, "Using file:"+file_path);
         this.recorder = new MediaRecorder();
 
@@ -169,11 +185,16 @@ public class Microphone implements Device
             file.mkdirs();
         }
 
-       File tempFile = new File(filepath, TEMP_FILE_FORMAT);
-       if (tempFile.exists()) tempFile.delete();
+       File tempFile = new File(file.getAbsolutePath(), TEMP_FILE_FORMAT);
 
-       return file.getAbsolutePath() + "/" + TEMP_FILE_FORMAT;
+//        if(!tempFile.exists())
+//            tempFile.mkdir();
+//       if (tempFile.exists()) tempFile.delete();
+//       tempFile = new File(filepath, TEMP_FILE_FORMAT);
+//       return file.getAbsolutePath() + "/" + TEMP_FILE_FORMAT;
+        return tempFile.getAbsolutePath();
     }
+
 
 
     private void writeAudioDataToFile() {
@@ -184,6 +205,7 @@ public class Microphone implements Device
         try {
             os = new  FileOutputStream(filename);
         } catch (FileNotFoundException e) {
+            Log.e(TAG, "Error while opening OutputStream for file:"+filename);
             e.printStackTrace();
         }
         int read = 0;
@@ -254,7 +276,8 @@ public class Microphone implements Device
 
     private void copyWaveFile(String input, String output)
     {
-        FileInputStream f_in;FileOutputStream f_out;
+        FileInputStream f_in;
+        FileOutputStream f_out;
         long total_audio_len = 0;
         long total_length = total_audio_len + 36; //for headers
         long sample_rate = (long) RECORDER_SAMPLERATE;
@@ -284,6 +307,8 @@ public class Microphone implements Device
         }catch(IOException e)
         {
             e.printStackTrace();
+            Log.e(TAG, "Error while opening input file:"+ input);
+            Log.e(TAG, "Error while opening output file:"+ output);
         }
 
     }
@@ -356,7 +381,9 @@ public class Microphone implements Device
         recorder =new  MediaRecorder();
 
         if(directory.exists()){
-            int count = directory.listFiles().length;
+            int count = 0;
+            if(directory.listFiles() != null)
+                count = directory.listFiles().length;
             output = Environment.getExternalStorageDirectory().getAbsolutePath() + "/audiorecorder/recordings/recording"+count+".mp3";
         }
 
@@ -498,79 +525,79 @@ public class Microphone implements Device
 
         Interpreter tflite;
 
-    //load the TFLite model in 'MappedByteBuffer' format using TF Interpreter
-        MappedByteBuffer tfliteModel  =  FileUtil.loadMappedFile(context, getModelPath());
-    /** Options for configuring the Interpreter.  */
-    Interpreter.Options tfliteOptions = new  Interpreter.Options();
-    tfliteOptions.setNumThreads(2);
-    tflite = new Interpreter(tfliteModel, tfliteOptions);
+        //load the TFLite model in 'MappedByteBuffer' format using TF Interpreter
+            MappedByteBuffer tfliteModel  =  FileUtil.loadMappedFile(context, getModelPath());
+        /** Options for configuring the Interpreter.  */
+        Interpreter.Options tfliteOptions = new  Interpreter.Options();
+        tfliteOptions.setNumThreads(2);
+        tflite = new Interpreter(tfliteModel, tfliteOptions);
 
-    //get the datatype and shape of the input tensor to be fed to tflite model
-    int imageTensorIndex = 0;
+        //get the datatype and shape of the input tensor to be fed to tflite model
+        int imageTensorIndex = 0;
 
-    DataType imageDataType = tflite.getInputTensor(imageTensorIndex).dataType();
+        DataType imageDataType = tflite.getInputTensor(imageTensorIndex).dataType();
 
-    int imageDataShape[] = tflite.getInputTensor(imageTensorIndex).shape();
+        int imageDataShape[] = tflite.getInputTensor(imageTensorIndex).shape();
 
-    //get the datatype and shape of the output prediction tensor from tflite model
-    int probabilityTensorIndex = 0;
-    int[] probabilityShape =
-            tflite.getOutputTensor(probabilityTensorIndex).shape();
-    DataType probabilityDataType =
-            tflite.getOutputTensor(probabilityTensorIndex).dataType();
-
-
-
-        //The 4 at the end is the amount of bytes that a float occupies in Java
-        // taken from the mfcc mean array
-        ByteBuffer byteBuffer  = ByteBuffer.allocate(63984);
-    for(int i= 0;i <  meanMFCCValues.length; i++){
-        float[] valArray= meanMFCCValues[i];
-        int[] inpShapeDim = {1,1,meanMFCCValues[0].length,1};
-        TensorBuffer valInTnsrBuffer = TensorBuffer.createDynamic(imageDataType);
-        valInTnsrBuffer.loadArray(valArray, inpShapeDim);
-        ByteBuffer  valInBuffer = valInTnsrBuffer.getBuffer();
-        byteBuffer.put(valInBuffer);
-    }
-
-    byteBuffer.rewind();
-
-    TensorBuffer outputTensorBuffer =
-            TensorBuffer.createFixedSize(probabilityShape, probabilityDataType);
-    //run the predictions with input and output buffer tensors to get probability values across the labels
-    tflite.run(byteBuffer, outputTensorBuffer.getBuffer());
+        //get the datatype and shape of the output prediction tensor from tflite model
+        int probabilityTensorIndex = 0;
+        int[] probabilityShape =
+                tflite.getOutputTensor(probabilityTensorIndex).shape();
+        DataType probabilityDataType =
+                tflite.getOutputTensor(probabilityTensorIndex).dataType();
 
 
-    //Code to transform the probability predictions into label values
-    String ASSOCIATED_AXIS_LABELS = "labels.txt";
-        List<String> associatedAxisLabels  = new ArrayList<>() ;
-    try {
-        associatedAxisLabels = FileUtil.loadLabels(context, ASSOCIATED_AXIS_LABELS);
-    } catch ( IOException e) {
-        Log.e("tfliteSupport", "Error reading label file", e);
-    }
 
-    //Tensor processor for processing the probability values and to sort them based on the descending order of probabilities
-        TensorProcessor probabilityProcessor = new TensorProcessor.Builder().add(new NormalizeOp(0.0f, 255.0f)).build();
-    if (null != associatedAxisLabels) {
-        // Map of labels and their corresponding probability
-        TensorLabel labels = new TensorLabel(
-                associatedAxisLabels,
-                probabilityProcessor.process(outputTensorBuffer)
-        );
+            //The 4 at the end is the amount of bytes that a float occupies in Java
+            // taken from the mfcc mean array
+            ByteBuffer byteBuffer  = ByteBuffer.allocate(63984);
+        for(int i= 0;i <  meanMFCCValues.length; i++){
+            float[] valArray= meanMFCCValues[i];
+            int[] inpShapeDim = {1,1,meanMFCCValues[0].length,1};
+            TensorBuffer valInTnsrBuffer = TensorBuffer.createDynamic(imageDataType);
+            valInTnsrBuffer.loadArray(valArray, inpShapeDim);
+            ByteBuffer  valInBuffer = valInTnsrBuffer.getBuffer();
+            byteBuffer.put(valInBuffer);
+        }
 
-        // Create a map to access the result based on label
-        Map<String, Float> floatMap = labels.getMapWithFloatValue();
+        byteBuffer.rewind();
 
-        //function to retrieve the top K probability values, in this case 'k' value is 1.
-        //retrieved values are storied in 'Recognition' object with label details.
-        List<Recognition> resultPrediction  = getTopKProbability(floatMap);
+        TensorBuffer outputTensorBuffer =
+                TensorBuffer.createFixedSize(probabilityShape, probabilityDataType);
+        //run the predictions with input and output buffer tensors to get probability values across the labels
+        tflite.run(byteBuffer, outputTensorBuffer.getBuffer());
 
-        //get the top 1 prediction from the retrieved list of top predictions
-        predictedResult = getPredictedValue(resultPrediction);
 
-    }
-    return predictedResult;
+        //Code to transform the probability predictions into label values
+        String ASSOCIATED_AXIS_LABELS = "labels.txt";
+            List<String> associatedAxisLabels  = new ArrayList<>() ;
+        try {
+            associatedAxisLabels = FileUtil.loadLabels(context, ASSOCIATED_AXIS_LABELS);
+        } catch ( IOException e) {
+            Log.e("tfliteSupport", "Error reading label file", e);
+        }
+
+        //Tensor processor for processing the probability values and to sort them based on the descending order of probabilities
+            TensorProcessor probabilityProcessor = new TensorProcessor.Builder().add(new NormalizeOp(0.0f, 255.0f)).build();
+        if (null != associatedAxisLabels) {
+            // Map of labels and their corresponding probability
+            TensorLabel labels = new TensorLabel(
+                    associatedAxisLabels,
+                    probabilityProcessor.process(outputTensorBuffer)
+            );
+
+            // Create a map to access the result based on label
+            Map<String, Float> floatMap = labels.getMapWithFloatValue();
+
+            //function to retrieve the top K probability values, in this case 'k' value is 1.
+            //retrieved values are storied in 'Recognition' object with label details.
+            List<Recognition> resultPrediction  = getTopKProbability(floatMap);
+
+            //get the top 1 prediction from the retrieved list of top predictions
+            predictedResult = getPredictedValue(resultPrediction);
+
+        }
+        return predictedResult;
 
 }
 

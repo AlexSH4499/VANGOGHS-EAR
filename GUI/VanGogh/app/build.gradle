@@ -1,7 +1,8 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 28
+    buildToolsVersion '29.0.3'
+    compileSdkVersion 29
     useLibrary 'android.test.runner'
 
     useLibrary 'android.test.base'
@@ -19,8 +20,8 @@ android {
 
 
         applicationId "com.example.vangogh"
-        minSdkVersion 27
-        targetSdkVersion 28
+        minSdkVersion 29
+        targetSdkVersion 29
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -49,8 +50,8 @@ repositories{
 
 dependencies {
 
-    implementation 'com.android.support:appcompat-v7:28.0.0'
-    implementation 'com.android.support:design:28.0.0'
+//    implementation 'com.android.support:appcompat-v7:28.0.0'
+//    implementation 'com.android.support:design:28.0.0'
 
     implementation 'com.kailashdabhi:om-recorder:1.1.5'
     implementation 'androidx.preference:preference:1.1.1'
