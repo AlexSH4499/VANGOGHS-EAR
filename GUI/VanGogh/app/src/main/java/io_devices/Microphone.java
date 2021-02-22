@@ -58,7 +58,6 @@ public class Microphone implements Device
     private MusicDataBase mydb;
 
     private File  directory ;
-//    private String AUDIO_RECORDER_FOLDER = "audiorecorder/recordings";
     private Context context;
     private long recording_time = 0;
     private Timer timer;
@@ -69,8 +68,6 @@ public class Microphone implements Device
 
 
     private String recording_timeString="";
-//    private final String AUDIO_FILE_FORMAT = ".wav";
-//    private final String TEMP_FILE_FORMAT = "temp_rec.raw";
 
     private int RECORDER_CHANNELS = android.media.AudioFormat.CHANNEL_IN_STEREO;
     private int RECORDER_AUDIO_ENCODING = android.media.AudioFormat.ENCODING_PCM_16BIT;
@@ -183,25 +180,6 @@ public class Microphone implements Device
         return isRecording;
     }
 
-//    private String getTempFilename()
-//    {
-//        String filepath = Environment.getExternalStorageDirectory().getAbsolutePath();
-//        File file = new File(filepath, AUDIO_RECORDER_FOLDER);
-//
-//        if (!file.exists()) {
-//            file.mkdirs();
-//        }
-//
-//       File tempFile = new File(file.getAbsolutePath(), TEMP_FILE_FORMAT);
-//
-////        if(!tempFile.exists())
-////            tempFile.mkdir();
-////       if (tempFile.exists()) tempFile.delete();
-////       tempFile = new File(filepath, TEMP_FILE_FORMAT);
-////       return file.getAbsolutePath() + "/" + TEMP_FILE_FORMAT;
-//        return tempFile.getAbsolutePath();
-//    }
-
 
 
     private void writeAudioDataToFile() {
@@ -270,119 +248,6 @@ public class Microphone implements Device
 
     }
 
-//    private String getFilename()
-//    {
-//        String filepath = Environment.getExternalStorageDirectory().getPath();
-//        File file = new File(filepath, AUDIO_RECORDER_FOLDER);
-//
-//        if(!file.exists()) {
-//            file.mkdirs();
-//        }
-//        return file.getAbsolutePath().toString() + "/" + SystemClock.currentThreadTimeMillis() + AUDIO_FILE_FORMAT ;
-//    }
-
-//    private void copyWaveFile(String input, String output)
-//    {
-//        FileInputStream f_in;
-//        FileOutputStream f_out;
-//        long total_audio_len = 0;
-//        long total_length = total_audio_len + 36; //for headers
-//        long sample_rate = (long) RECORDER_SAMPLERATE;
-//        int channels = 2;
-//
-//        long byte_rate = (long) RECORDER_BITS * RECORDER_SAMPLERATE *channels / 8;
-//
-//        byte data[]  = new byte[buffer_size];
-//
-//        try{
-//
-//            f_in = new FileInputStream(input);
-//            f_out = new FileOutputStream(output);
-//
-//            total_audio_len = f_in.getChannel().size();
-//            total_length = total_audio_len + 36;//TODO: MAY BE A BUG HERE
-//            FileManager.WriteWaveFileHeader(f_out, total_audio_len, total_length, sample_rate, channels, byte_rate);
-//
-//            while(f_in.read(data) != -1)
-//            {
-//                f_out.write(data);
-//            }
-//
-//            f_in.close();
-//            f_out.close();
-//
-//        }catch(IOException e)
-//        {
-//            e.printStackTrace();
-//            Log.e(TAG, "Error while opening input file:"+ input);
-//            Log.e(TAG, "Error while opening output file:"+ output);
-//        }
-//
-//    }
-
-//    private void WriteWaveFileHeader(FileOutputStream out, long totalAudioLen,
-//            long totalDataLen, long longSampleRate, long channels,
-//            long byteRate)
-//    {
-//        byte header [] = new byte[44];
-//        header[0] =(byte) 'R';// RIFF/WAVE header
-//        header[1] =(byte) 'I';
-//        header[2] =(byte) 'F';
-//        header[3] = (byte)'F';
-//        header[4] = (byte)(totalDataLen & 0xff);
-//        header[5] =(byte) (totalDataLen >> 8 & 0xff);
-//        header[6] = (byte) (totalDataLen >> 16 & 0xff);
-//        header[7] = (byte)(totalDataLen >> 24 & 0xff);
-//        header[8] = (byte)'W';
-//        header[9] = (byte)'A';
-//        header[10] =(byte) 'V';
-//        header[11] = (byte)'E';
-//        header[12] =(byte) 'f'; // 'fmt ' chunk
-//        header[13] =(byte) 'm';
-//        header[14] = (byte)'t';
-//        header[15] = (byte)' ';
-//        header[16] = 16; // 4 bytes: size of 'fmt ' chunk
-//        header[17] = 0;
-//        header[18] = 0;
-//        header[19] = 0;
-//        header[20] = 1 ;// format = 1
-//        header[21] = 0;
-//        header[22] = (byte)channels;
-//        header[23] = 0;
-//        header[24] = (byte)(longSampleRate & 0xff);
-//        header[25] = (byte)(longSampleRate >> 8 & 0xff);
-//        header[26] =(byte) (longSampleRate >> 16 & 0xff);
-//        header[27] = (byte)(longSampleRate >> 24 & 0xff);
-//        header[28] = (byte)(byteRate & 0xff);
-//        header[29] = (byte)(byteRate >> 8 & 0xff);
-//        header[30] =(byte) (byteRate >> 16 & 0xff);
-//        header[31] = (byte)(byteRate >> 24 & 0xff);
-//        header[32] = (byte)(2 * 16 / 8); // block align
-//        header[33] = (byte)0;
-//        header[34] = (byte)RECORDER_BITS ;// bits per sample
-//        header[35] =(byte) 0;
-//        header[36] = (byte)'d';
-//        header[37] = (byte)'a';
-//        header[38] =(byte) 't';
-//        header[39] = (byte)'a';
-//        header[40] =(byte) (totalAudioLen & 0xff);
-//        header[41] =(byte) (totalAudioLen >> 8 & 0xff);
-//        header[42] = (byte)(totalAudioLen >> 16 & 0xff);
-//        header[43] = (byte)(totalAudioLen >> 24 & 0xff);
-//
-//        try{
-//            out.write(header, 0, 44);
-//        }catch(Exception e)
-//        {
-//            e.printStackTrace();
-//        }
-//    }
-
-//    private void deleteTempFile()
-//    {
-//        File file = new File(FileManager.getTempFilename());
-//        file.delete();
-//    }
 
     private void  initRecorder() {
         recorder =new  MediaRecorder();
@@ -514,16 +379,6 @@ public class Microphone implements Device
         predictionThread.start();
 
     }
-
-//    public String getLabelsFilePath()
-//    {
-//        return directory.getAbsolutePath().substring(0, getLabelsDirectoryFilePath().lastIndexOf("/recordings"));
-//    }
-//
-//    public String getLabelsDirectoryFilePath() {
-//        return directory.getAbsolutePath();
-//    }
-
 
     protected String loadModelAndMakePredictions(float meanMFCCValues[][] , Context context) throws IOException
     {
