@@ -148,7 +148,6 @@ public class AudioRecorder extends Fragment
         context = this.getActivity().getApplication().getBaseContext();
         handler = new Handler();
 
-
         view = inflater.inflate(R.layout.audio_recorder_fragment, container , false);
 
         microphone_button = (Button) view.findViewById(R.id.microphone_button);
