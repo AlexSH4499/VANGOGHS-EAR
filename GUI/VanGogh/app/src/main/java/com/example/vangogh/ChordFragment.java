@@ -373,6 +373,7 @@ public class ChordFragment extends Fragment
                     e.printStackTrace();
                 }
             }
+
             if (resultCode == Activity.RESULT_CANCELED) {
                 //TODO: Handle Activity Cancelled Code
             }
