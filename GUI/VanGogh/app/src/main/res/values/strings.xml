@@ -2,11 +2,25 @@
     <string name="app_fullname">Van Goghs Ear</string>
     <string name="app_name">VanGogh</string>
     <string name="mic">Microphone</string>
+
+    <!--    Chord Fragment-->
+    <string name="chord_text_input_hint">Enter Chord</string>
+    <string name="load_chord_button_text">Load</string>
+    <string name="next_chord_button_text">Next</string>
+    <string name="update_chord_button_text">Update</string>
+
+    <!-- Tablature Fragment -->
     <string name="load_tablature_button">Load</string>
+    <string name="tablature_placeholder_text">Tablature appears here</string>
 
     <!--    Nav Drawer-->
     <string name="drawer_open">Open navigation drawer</string>
     <string name="drawer_close">Close navigation drawer</string>
+
+    <!-- Nav Drawer Items    -->
+    <string name="nav_drawer_item_1">Chords</string>
+    <string name="nav_drawer_item_2">Tablatures</string>
+    <string name="nav_drawer_item_3">Audio Recorder</string>
 
     <!--    Audio Recorder-->
     <string name="record_button">Microphone Recording Button</string>

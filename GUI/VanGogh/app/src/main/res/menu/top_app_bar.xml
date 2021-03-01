@@ -4,11 +4,11 @@
 
     <group>
     <!-- "Mark Favorite", should appear as action button if possible -->
-    <item
-        android:id="@+id/action_favorite"
+<!--    <item-->
+<!--        android:id="@+id/action_favorite"-->
 
-        android:title="Chords"
-        app:showAsAction="ifRoom"/>
+<!--        android:title="Chords"-->
+<!--        app:showAsAction="ifRoom"/>-->
 
     <!--        android:icon="@drawable/ic_favorite_black_48dp"-->
 
@@ -21,13 +21,7 @@
         android:title="Chords DB"
         app:showAsAction="never"/>
 
-    <item android:id="@+id/load_song"
-          android:title="Find song"
-          app:showAsAction="ifRoom"/>
 
-    <item android:id="@+id/action_record_view"
-        android:title="Record"
-        app:showAsAction="never"/>
 
     <item android:id="@+id/action_help"
         android:title="Help"

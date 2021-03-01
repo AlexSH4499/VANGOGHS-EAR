@@ -5,28 +5,19 @@
     <group android:checkableBehavior="single">
 
         <item
-
             android:id="@+id/nav_first_fragment"
-
             android:icon="@drawable/ic_one"
-
-            android:title="Chords" />
+            android:title="@string/nav_drawer_item_1" />
 
         <item
-
             android:id="@+id/nav_second_fragment"
-
             android:icon="@drawable/ic_two"
-
-            android:title="Tablatures" />
+            android:title="@string/nav_drawer_item_2" />
 
         <item
-
             android:id="@+id/nav_third_fragment"
-
             android:icon="@drawable/ic_three"
-
-            android:title="Audio Recorder" />
+            android:title="@string/nav_drawer_item_3" />
 
     </group>
 

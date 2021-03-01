@@ -24,7 +24,7 @@
         android:layout_marginTop="165dp"
         android:layout_marginEnd="95dp"
         android:scrollbars="vertical"
-        android:text="Tablature appears here">
+        android:text="@string/tablature_placeholder_text">
 
     </TextView>
 </RelativeLayout>

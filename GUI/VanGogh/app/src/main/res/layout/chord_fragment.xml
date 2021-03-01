@@ -30,7 +30,7 @@
                 android:layout_alignParentBottom="true"
                 android:layout_marginEnd="8dp"
                 android:layout_marginBottom="17dp"
-                android:text="Update" />
+                android:text="@string/update_chord_button_text" />
 
             <Button
                 android:id="@+id/load_chords"
@@ -40,7 +40,7 @@
                 android:layout_alignParentEnd="true"
                 android:layout_marginEnd="14dp"
                 android:layout_marginBottom="8dp"
-                android:text="Load" />
+                android:text="@string/load_chord_button_text" />
 
             <Button
                 android:id="@+id/next_chord_button"
@@ -50,7 +50,7 @@
                 android:layout_alignParentEnd="true"
                 android:layout_marginEnd="29dp"
                 android:layout_marginBottom="-65dp"
-                android:text="next" />
+                android:text="@string/next_chord_button_text" />
 
             <EditText
                 android:id="@+id/chord_input"
@@ -60,7 +60,7 @@
                 android:layout_alignParentBottom="true"
                 android:layout_gravity="bottom|end"
                 android:layout_marginEnd="8dp"
-                android:hint="Enter Chord" />
+                android:hint="@string/chord_text_input_hint" />
 
             <FrameLayout
                 android:id="@+id/new_audio_fragment_container_view"
