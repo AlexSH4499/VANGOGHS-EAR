@@ -24,6 +24,8 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -38,7 +40,7 @@ import io_devices.Microphone;
 public class AudioRecorder extends Fragment
 {
 //    private Context context;
-    private Date todays_date;
+//    private Date todays_date;
     //used for maintaining track of how many clicks have been performed on the record button
     private static int mic_button_clicks=0;//might be problematic in multi-threaded workloads due to possible race condition
 
@@ -54,7 +56,7 @@ public class AudioRecorder extends Fragment
     private boolean setText = false;
 
     // String used to store the File being recorded from Mic
-    String Output_File = "Sample_File";
+//    String Output_File = "Sample_File";
 
     // String to debug using LogCat
     private static final String TAG = "AUDIO RECORDER FRAG";
@@ -70,61 +72,22 @@ public class AudioRecorder extends Fragment
     View view;
 
     //Button for binding with the XML Button
-    Button microphone_button;
+    FloatingActionButton microphone_button;
 
-    /**
-     * Generates the Output File Path for the Audio Recorder to store recorded audio.
-     *
-     * @param filename the name of the file to be created for storing the recorded audio.
-     * @return String representation of the Output File Path.
-     */
-    protected String OutputFilePath(String filename)
-    {
-        String res;
-        if(nonEmptyString(filename)) {
 
-//            context = this.getContext();
-            res = this.OutputFilePath(filename, "3gp");
-        }
-        else{
-            res = this.OutputFilePath("sample","3gp");
-        }
-        return res;
-    }
+//    /**
+//     * Verifies if @param text is an empty string or an only whitespace containing string
+//     * @param text the String we want to verify for emptiness
+//     * @return boolean representing if the @param text is non-empty
+//     */
+//    protected boolean nonEmptyString(String text)
+//    {
+//        if(text.trim().length() > 0 && text  != null)
+//            return true;
+//        else
+//            return false;
+//    }
 
-    /**
-     * Verifies if @param text is an empty string or an only whitespace containing string
-     * @param text the String we want to verify for emptiness
-     * @return boolean representing if the @param text is non-empty
-     */
-    protected boolean nonEmptyString(String text)
-    {
-        if(text.trim().length() > 0 && text  != null)
-            return true;
-        else
-            return false;
-    }
-
-    /**
-     * Generates the Output File Path for the Audio Recorder to store recorded audio.
-     *
-     * @param filename the name of the file to be created for storing the recorded audio.
-     * @param format the file format that the data will be stored as.
-     * @return String representation of the Output File Path with specified format
-     */
-    private String OutputFilePath(String filename, String format)
-    {
-        String res;
-        if(filename != null && filename != " ") {
-
-            context = this.getContext();
-            res = context.getExternalFilesDir(null).getAbsolutePath() + "/" + filename + "." +format;
-        }
-        else{
-            res = context.getExternalFilesDir(null).getAbsolutePath() + "/" + "sample" + "."+format;
-        }
-        return res;
-    }
 
 
 
@@ -150,7 +113,7 @@ public class AudioRecorder extends Fragment
 
         view = inflater.inflate(R.layout.audio_recorder_fragment, container , false);
 
-        microphone_button = (Button) view.findViewById(R.id.microphone_button);
+        microphone_button = (FloatingActionButton) view.findViewById(R.id.microphone_button);
         microphone_button.setOnClickListener(new View.OnClickListener()
         {
             @Override
@@ -160,7 +123,7 @@ public class AudioRecorder extends Fragment
                 {
                     case 0:
                         mic = new Microphone(context);
-                        microphone_button.setText("Stop");
+//                        microphone_button.setText("Stop");
 
                         try
                         {
@@ -172,7 +135,7 @@ public class AudioRecorder extends Fragment
                             if(setText)
                             {
                                 mic.stop_recording_wav(context);
-                                microphone_button.setText("Start");
+//                                microphone_button.setText("Start");
                             }
                         }catch  (Exception e)
                         {
@@ -182,7 +145,7 @@ public class AudioRecorder extends Fragment
                         mic_button_clicks = (mic_button_clicks + 1) % MAX_RECORD_BTN_CLICKS;
                         break;
                     case 1:
-                        microphone_button.setText("Start");
+//                        microphone_button.setText("Start");
 
                         try
                         {
@@ -216,7 +179,7 @@ public class AudioRecorder extends Fragment
                         try
                         {
                             Log.e(TAG, "Unexpected value for Mic Button clicks:"+mic_button_clicks);
-                            microphone_button.setText("Start");
+//                            microphone_button.setText("Start");
                         } catch(Exception e) {
                             Log.e(TAG, "Tried to stop/reset unavailable MediaRecorder!");
                             e.printStackTrace();
@@ -280,7 +243,7 @@ public class AudioRecorder extends Fragment
             {
                 setText = true;
                 mic.stop_recording_wav(context);
-                microphone_button.setText("Start");
+//                microphone_button.setText("Start");
                 FragmentManager frag_man = getParentFragmentManager();
                 Fragment frag = frag_man.findFragmentById(R.id.fragment_container_view);//TODO: Might cause a bug, be sure to remove it!
 //                Intent intent = new Intent();
