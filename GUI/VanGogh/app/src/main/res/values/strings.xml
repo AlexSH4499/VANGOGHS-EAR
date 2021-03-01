@@ -1,11 +1,19 @@
 <resources>
+    <string name="app_fullname">Van Goghs Ear</string>
     <string name="app_name">VanGogh</string>
     <string name="mic">Microphone</string>
     <string name="load_tablature_button">Load</string>
-    <string name="drawer_open">Open navigation drawer</string>
 
+    <!--    Nav Drawer-->
+    <string name="drawer_open">Open navigation drawer</string>
     <string name="drawer_close">Close navigation drawer</string>
 
+    <!--    Audio Recorder-->
     <string name="record_button">Microphone Recording Button</string>
     <string name="mic_record_error">Error: Permission to RECORD AUDIO not granted to record</string>
+
+    <!-- Audio Player-->
+    <string name="audio_player_play">Play</string>
+    <string name="audio_player_pause">Pause</string>
+
 </resources>

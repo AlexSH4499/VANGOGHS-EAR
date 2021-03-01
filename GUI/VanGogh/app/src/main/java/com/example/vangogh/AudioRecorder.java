@@ -39,8 +39,6 @@ import io_devices.Microphone;
 
 public class AudioRecorder extends Fragment
 {
-//    private Context context;
-//    private Date todays_date;
     //used for maintaining track of how many clicks have been performed on the record button
     private static int mic_button_clicks=0;//might be problematic in multi-threaded workloads due to possible race condition
 
@@ -55,8 +53,6 @@ public class AudioRecorder extends Fragment
     private float start_time = Float.MIN_VALUE;//set it to a default absurd value
     private boolean setText = false;
 
-    // String used to store the File being recorded from Mic
-//    String Output_File = "Sample_File";
 
     // String to debug using LogCat
     private static final String TAG = "AUDIO RECORDER FRAG";

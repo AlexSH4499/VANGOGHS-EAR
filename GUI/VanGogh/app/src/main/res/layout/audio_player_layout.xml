@@ -12,25 +12,27 @@
         android:layout_alignParentEnd="true"
         android:layout_marginEnd="203dp" />
 
-    <Button
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/play"
         android:layout_width="wrap_content"
-        android:layout_height="37dp"
-
-
+        android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
-        android:layout_marginEnd="255dp"
-        android:text="PLAY" />
+        android:layout_gravity="center_horizontal|end"
+        android:layout_margin="16dp"
+        android:layout_marginEnd="279dp"
+        android:text="@string/audio_player_play"
+        android:src="@drawable/ic_pause_light"/>
 
-    <Button
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/pause"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-
-
         android:layout_alignParentEnd="true"
-        android:layout_marginEnd="103dp"
-        android:text="PAUSE" />
+        android:layout_margin="16dp"
+        android:layout_gravity="center_horizontal|end"
+        android:layout_marginEnd="93dp"
+        android:text="@string/audio_player_pause"
+        android:src="@drawable/ic_play_light"/>
 
     <!--    <Button-->
 <!--        android:id="@+id/stop"-->

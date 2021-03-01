@@ -27,6 +27,8 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
 /**
  * AudioPlayer for playing back chord audio from the user's selection
  */
@@ -38,7 +40,7 @@ public class AudioPlayer extends Fragment {
     private boolean idChecker = false;
 
     //GUI Elements for interacting with the audio file
-    private Button play, stop,pause,forward,back;
+    private FloatingActionButton play, stop,pause,forward,back;
 
 
     private View view;
@@ -112,8 +114,8 @@ public class AudioPlayer extends Fragment {
         handler = new Handler();
         // Bind Java Objects to XML Layout Views
 
-        play = (Button) view.findViewById(R.id.play);
-        pause = (Button) view.findViewById(R.id.pause);
+        play = (FloatingActionButton) view.findViewById(R.id.play);
+        pause = (FloatingActionButton) view.findViewById(R.id.pause);
 
 
         seekbar = (SeekBar)  view.findViewById(R.id.seekbar);
@@ -160,8 +162,6 @@ public class AudioPlayer extends Fragment {
         } else {
             player = MediaPlayer.create(this.getActivity().getBaseContext(),file);
         }
-
-
 
         // Set callback listener for events on the update button
         play.setOnClickListener(new View.OnClickListener(){

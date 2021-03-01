@@ -1,71 +1,100 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    xmlns:tools="http://schemas.android.com/tools"
-    tools:context="com.example.vangogh.ChordFragment">
+<!--<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"-->
+<!--    android:layout_width="match_parent"-->
+<!--    android:layout_height="match_parent"-->
+<!--    xmlns:tools="http://schemas.android.com/tools"-->
+<!--    tools:context="com.example.vangogh.ChordFragment">-->
 
-
-    <ImageView
-        android:id="@+id/chord_view"
-        android:layout_width="336dp"
-        android:layout_height="354dp"
-        android:layout_above="@+id/new_audio_fragment_container_view"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentEnd="true"
-        android:layout_marginStart="39dp"
-        android:layout_marginEnd="36dp"
-        android:layout_marginBottom="-5dp" />
-
-    <EditText
-        android:id="@+id/chord_input"
-        android:layout_width="282dp"
+    <com.google.android.material.card.MaterialCardView
+    android:layout_gravity="center"
+        android:id="@+id/chord_card_view"
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentBottom="true"
-        android:layout_marginEnd="111dp"
-        android:layout_marginBottom="17dp"
-        android:hint="Enter Chord" />
+        xmlns:tools="http://schemas.android.com/tools"
+        tools:context="com.example.vangogh.ChordFragment"
+        android:layout_margin="8dp"
+        android:theme="@style/Theme.MaterialComponents.DayNight.NoActionBar">
 
-    <Button
-        android:id="@+id/update_chord"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentBottom="true"
-        android:layout_marginEnd="15dp"
-        android:layout_marginBottom="17dp"
-        android:text="Update" />
+        <RelativeLayout
+            android:id="@+id/chord_chard_controls"
+            android:layout_width="wrap_content"
+            android:layout_height="500dp"
+            android:orientation="horizontal">
 
-    <Button
-        android:id="@+id/load_chords"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentBottom="true"
-        android:layout_marginEnd="15dp"
-        android:layout_marginBottom="60dp"
-        android:text="Load" />
+            <Button
+                android:id="@+id/update_chord"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentBottom="true"
+                android:layout_marginEnd="8dp"
+                android:layout_marginBottom="17dp"
+                android:text="Update" />
 
-    <Button
-        android:id="@+id/next_chord_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/chord_view"
-        android:layout_alignParentEnd="true"
-        android:layout_marginEnd="42dp"
-        android:layout_marginBottom="33dp"
-        android:text="next" />
+            <Button
+                android:id="@+id/load_chords"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_above="@+id/update_chord"
+                android:layout_alignParentEnd="true"
+                android:layout_marginEnd="14dp"
+                android:layout_marginBottom="8dp"
+                android:text="Load" />
 
-    <FrameLayout
-        android:id="@+id/new_audio_fragment_container_view"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/chord_input"
-        android:layout_alignParentEnd="true"
-        android:layout_marginEnd="37dp"
-        android:layout_marginBottom="41dp"
-        android:orientation="horizontal" />
+            <Button
+                android:id="@+id/next_chord_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_above="@+id/chord_view"
+                android:layout_alignParentEnd="true"
+                android:layout_marginEnd="29dp"
+                android:layout_marginBottom="-65dp"
+                android:text="next" />
+
+            <EditText
+                android:id="@+id/chord_input"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentBottom="true"
+                android:layout_gravity="bottom|end"
+                android:layout_marginEnd="8dp"
+                android:hint="Enter Chord" />
+
+            <FrameLayout
+                android:id="@+id/new_audio_fragment_container_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_above="@+id/chord_input"
+                android:layout_below="@+id/chord_view"
+                android:layout_gravity="center"
+                android:layout_margin="8dp"
+                android:orientation="horizontal" />
+
+            <ImageView
+
+                android:id="@+id/chord_view"
+                android:layout_width="200dp"
+                android:layout_height="200dp"
+                android:layout_above="@+id/load_chords"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentEnd="true"
+                android:layout_gravity="center|top"
+                android:layout_margin="8dp"
+                android:layout_marginBottom="66dp" />
+        </RelativeLayout>
 
 
-</RelativeLayout>
+        <!--    <FrameLayout-->
+<!--        android:id="@+id/new_audio_fragment_container_view"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_above="@+id/chord_input"-->
+<!--        android:layout_alignParentEnd="true"-->
+<!--        android:layout_marginEnd="37dp"-->
+<!--        android:layout_marginBottom="41dp"-->
+<!--        android:orientation="horizontal" />-->
+    </com.google.android.material.card.MaterialCardView>
+
+<!--</RelativeLayout>-->
