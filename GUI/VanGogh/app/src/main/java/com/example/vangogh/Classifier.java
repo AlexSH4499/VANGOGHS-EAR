@@ -169,7 +169,7 @@
     /** Gets the name of the label file stored in Assets. */
     protected abstract String getLabelPath();
 
-    /** Gets the TensorOperator to nomalize the input image in preprocessing. */
+    /** Gets the TensorOperator to normalize the input image in preprocessing. */
     protected abstract TensorOperator getPreprocessNormalizeOp();
 
     /**

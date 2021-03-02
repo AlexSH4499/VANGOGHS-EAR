@@ -42,6 +42,9 @@ import chords.ChordValidator;
  */
 public class ChordFragment extends Fragment
 {
+    private static final int CHORD_REQUEST =1234;
+    private static final int TAB_REQUEST = 5678;
+
     int fret_position = 0; // from 0 to 12
     private String selected_chords="";
     private final String TAG = "CHORD FRAG";
@@ -70,7 +73,6 @@ public class ChordFragment extends Fragment
         if(this.validateChord(chord)) {
             this.current_chord = chord.toLowerCase();
             this.current_chords = new ArrayList<>();
-//            this.current_chords.add(this.current_chord);
         }
         else{
             this.current_chord = "";
@@ -79,10 +81,9 @@ public class ChordFragment extends Fragment
 
     public ChordFragment(ArrayList<String> chords)
     {
+        this.current_chords = new ArrayList<>();
         for(String chord : chords) {
             if(this.validateChord(chord)) {
-                this.current_chord = chord.toLowerCase();
-//                this.current_chords = new ArrayList<>();
                 this.current_chords.add(this.current_chord);
             }
 
@@ -91,11 +92,7 @@ public class ChordFragment extends Fragment
         if(this.current_chords.size() == 0)
             this.current_chord = "";
         else
-        {
-            this.current_chord = current_chords.get(0);
-        }
-
-
+            this.current_chord = current_chords.get(0).toLowerCase();
 
     }
 
@@ -120,7 +117,7 @@ public class ChordFragment extends Fragment
             // Asks FileManager to be initialized and awaits the result of selected file
             Intent intent = new Intent(this.getActivity(), FileManager.class);
 
-            startActivityForResult(intent, 1234);
+            startActivityForResult(intent, CHORD_REQUEST);
         }
 
     }
@@ -137,9 +134,17 @@ public class ChordFragment extends Fragment
         update_btn = (Button) view.findViewById(R.id.update_chord);
         load_btn = (Button) view.findViewById(R.id.load_chords);
         chord_view = (ImageView) view.findViewById(R.id.chord_view);
-
         next_chord_btn = (Button) view.findViewById(R.id.next_chord_button);
 
+        //TODO: Fix toggle visibility for buttons after clicks
+//        if(this.current_chords.size() <=0) {
+//            next_chord_btn.setClickable(false);
+//            next_chord_btn.setVisibility(View.INVISIBLE);
+//        }
+//        else{
+//            next_chord_btn.setClickable(true);
+//            next_chord_btn.setVisibility(View.VISIBLE);
+//        }
 
         final FragmentManager man = this.getActivity().getSupportFragmentManager();
 
@@ -174,8 +179,6 @@ public class ChordFragment extends Fragment
                 editText.setText("");
             }
         });
-
-
         load_btn.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v)
@@ -246,17 +249,13 @@ public class ChordFragment extends Fragment
     private File getChordFile() throws Exception
     {
         FileManager fileManager = new FileManager(this.getActivity().getBaseContext().getApplicationContext());
-
         return fileManager.getChordFile("g");//defaults to G chord as we know it works
     }
 
-
     private File getChordFile(String chord_filename) throws Exception
     {
-        FileManager fileManager = new FileManager(this.getActivity().getBaseContext().getApplicationContext());
-
+       FileManager fileManager = new FileManager(this.getActivity().getBaseContext().getApplicationContext());
        return fileManager.getChordFile(chord_filename);
-
     }
 
 
@@ -273,7 +272,6 @@ public class ChordFragment extends Fragment
         chord_validator = new ChordValidator(valid_chords);
 
         return (chord_validator.isValidChord(input_chord));
-
     }
 
 
@@ -288,7 +286,9 @@ public class ChordFragment extends Fragment
         Log.d(TAG, "Processing chord:"+chordName);
         this.chord_factory = new ChordFactory();
         this.chord_validator = new ChordValidator(this.chord_factory.createValidInternalChords());
+
         ChordModel ch_model = this.chord_validator.extractChord(chordName);
+
         if(validateChord(ch_model.toString())) {
             // Prepare data
             Resources resources = this.getResources();
@@ -330,21 +330,19 @@ public class ChordFragment extends Fragment
         super.onActivityResult(requestCode, resultCode, data);
 
         //Receives the URI of selected file from FileManager class
-        if (requestCode == 1234) {
+        if (requestCode == CHORD_REQUEST) {
             if(resultCode == Activity.RESULT_OK){
                 String result=data.getStringExtra("file");
                 Uri uri = Uri.parse(result);
 //                selected_chords = uri;
                 Log.d(TAG, "Saved URI of selected recording:"+uri);
-
-
-
             }
             if (resultCode == Activity.RESULT_CANCELED) {
                 // there's no result
             }
         }
 
+        // Predicted Chords
         if (requestCode == 5678) {
             if(resultCode == Activity.RESULT_OK){
                 String result=data.getStringExtra("file");

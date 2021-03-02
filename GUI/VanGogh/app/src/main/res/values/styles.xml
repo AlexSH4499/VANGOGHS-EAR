@@ -6,6 +6,8 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
+
+<!--        <item name="normalText">@color/white</item>-->
 <!--        <item type="attr" name="colorPrimary">#6200EE</item>-->
 <!--        <item type="attr" name="colorPrimaryDark">#3700B3</item>-->
 <!--        <item type="attr"  name="colorAccent">#03DAC5</item>-->

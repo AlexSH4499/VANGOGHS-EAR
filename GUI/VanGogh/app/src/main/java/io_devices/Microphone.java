@@ -1,24 +1,19 @@
 package io_devices;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.media.AudioRecord;
 import android.media.MediaRecorder;
-import android.os.Environment;
-import android.os.SystemClock;
 import android.util.Log;
 import android.widget.Toast;
 
 import com.example.database.MusicDataBase;
-import com.example.vangogh.DatabaseView;
 import com.example.vangogh.FileManager;
-import com.example.vangogh.Recognition;
+import utils.Recognition;
 import com.jlibrosa.audio.JLibrosa;
 import com.jlibrosa.audio.wavFile.WavFileException;
 
 import org.tensorflow.lite.DataType;
 import org.tensorflow.lite.Interpreter;
-import org.tensorflow.lite.Tensor;
 import org.tensorflow.lite.support.common.FileUtil;
 import org.tensorflow.lite.support.common.TensorProcessor;
 import org.tensorflow.lite.support.label.TensorLabel;
@@ -26,22 +21,17 @@ import org.tensorflow.lite.support.tensorbuffer.TensorBuffer;
 import org.tensorflow.lite.support.common.ops.NormalizeOp;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.MappedByteBuffer;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
-import java.util.PriorityQueue;
 import java.util.Stack;
 import java.util.Timer;
 import java.util.TimerTask;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 import utils.Device;
 //import utils.MapEntryComparator;
@@ -79,6 +69,8 @@ public class Microphone implements Device
 
     private String output = "";
     private FileManager fileManager;
+
+
     /**
      * Credits to Vasanthkumar Velayudham for his tutorial:
      * Where I got classes incorporated here for WAV files
@@ -526,6 +518,18 @@ public class Microphone implements Device
         return splitSongValList;
     }
 
+    public boolean release()
+    {
+        try {
+            recorder.release();
+        }catch(Exception e)
+        {
+            e.printStackTrace();
+            Log.e(TAG, "Error releasing recorder object");
+            return false;
+        }
+        return true;
+    }
 
 
     /**
@@ -571,7 +575,26 @@ public class Microphone implements Device
 
     @Override
     public boolean reset() {
-        return false;
+
+        try{
+            recorder.reset();
+            recorder.setAudioSource(MediaRecorder.AudioSource.DEFAULT);
+            recorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
+            recorder.setOutputFile(FileManager.getTempFilename()); //TODO: test this, it may cause errors since temp isn't deleted explicitly!
+            recorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
+            recorder.prepare();
+
+        }catch(Exception e)
+        {
+            Log.e(TAG, "Error while resetting microphone:"+e);
+            e.printStackTrace();
+
+            return false;
+        }
+        finally {
+            return true;
+        }
+
     }
 
     /**

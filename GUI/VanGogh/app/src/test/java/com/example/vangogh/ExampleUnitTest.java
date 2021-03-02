@@ -1,17 +1,7 @@
 package com.example.vangogh;
 
 
-import com.jlibrosa.audio.exception.FileFormatNotSupportedException;
-import com.jlibrosa.audio.wavFile.WavFileException;
-
-import org.apache.commons.math3.complex.Complex;
-import org.junit.Test;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.Arrays;
-
-import static org.junit.Assert.*;
+import io_devices.PreProcessor;
 
 /**
  * Example local unit test, which will execute on the development machine (host).

@@ -48,6 +48,9 @@ public class AudioRecorder extends Fragment
     private final int REQUEST_WRITE_STORAGE = 1;
     private final int REQUEST_RECORD_AUDIO = 2;
 
+    private final int MIC_STOP = 1;
+    private final int MIC_START = 0;
+
     // Variables for auto-stopping recording
     private Handler handler;
     private float start_time = Float.MIN_VALUE;//set it to a default absurd value
@@ -69,22 +72,6 @@ public class AudioRecorder extends Fragment
 
     //Button for binding with the XML Button
     FloatingActionButton microphone_button;
-
-
-//    /**
-//     * Verifies if @param text is an empty string or an only whitespace containing string
-//     * @param text the String we want to verify for emptiness
-//     * @return boolean representing if the @param text is non-empty
-//     */
-//    protected boolean nonEmptyString(String text)
-//    {
-//        if(text.trim().length() > 0 && text  != null)
-//            return true;
-//        else
-//            return false;
-//    }
-
-
 
 
     @Override
@@ -117,10 +104,8 @@ public class AudioRecorder extends Fragment
             {
                 switch(mic_button_clicks)
                 {
-                    case 0:
+                    case MIC_START:
                         mic = new Microphone(context);
-//                        microphone_button.setText("Stop");
-
                         try
                         {
                             Log.d(TAG, "Button clicks:"+mic_button_clicks);
@@ -131,7 +116,6 @@ public class AudioRecorder extends Fragment
                             if(setText)
                             {
                                 mic.stop_recording_wav(context);
-//                                microphone_button.setText("Start");
                             }
                         }catch  (Exception e)
                         {
@@ -140,8 +124,7 @@ public class AudioRecorder extends Fragment
                         }
                         mic_button_clicks = (mic_button_clicks + 1) % MAX_RECORD_BTN_CLICKS;
                         break;
-                    case 1:
-//                        microphone_button.setText("Start");
+                    case MIC_STOP:
 
                         try
                         {
@@ -149,7 +132,6 @@ public class AudioRecorder extends Fragment
                             mic.stop_recording_wav(context);
                             FragmentManager frag_man = getParentFragmentManager();
                             Fragment frag = frag_man.findFragmentById(R.id.nav_third_fragment);
-                            Intent intent = new Intent();
 
                             if(frag != null)
                             {
@@ -159,7 +141,6 @@ public class AudioRecorder extends Fragment
                                 Uri uri = Uri.fromFile(new File(fm.getLabelsFilePath()));
                                 ArrayList<String> labels = fm.readFromLabelsFile(uri);
                                 Log.e(TAG, "Current Read Label:"+ Arrays.toString(new String[labels.size()]));
-//                                frag_man.beginTransaction().add(R.id.nav_third_fragment, new ChordFragment(labels.get(0)) , "CHORDS").commit();
                                 frag_man.beginTransaction().add(R.id.nav_third_fragment, new ChordFragment(labels) , "CHORDS").commit();
                             }
                         } catch  (Exception e)
@@ -201,6 +182,7 @@ public class AudioRecorder extends Fragment
         {
             try{
                 //destroy mic object here
+                mic.release();
                 mic = null;
             }catch(Exception e)
             {
@@ -211,6 +193,8 @@ public class AudioRecorder extends Fragment
 
         Log.d(TAG, "AudioRecorder.onDestroyView method was called.");
     }
+
+
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults)
@@ -239,10 +223,9 @@ public class AudioRecorder extends Fragment
             {
                 setText = true;
                 mic.stop_recording_wav(context);
-//                microphone_button.setText("Start");
                 FragmentManager frag_man = getParentFragmentManager();
                 Fragment frag = frag_man.findFragmentById(R.id.fragment_container_view);//TODO: Might cause a bug, be sure to remove it!
-//                Intent intent = new Intent();
+
                 if(frag == null)
                 {
                     //TODO: Fix this so we can see the first label inside the ChordFragment view
@@ -250,14 +233,15 @@ public class AudioRecorder extends Fragment
                     //Open file and feed it
                     FileManager fm = new FileManager(getActivity());
                     Uri uri = Uri.fromFile(new File(fm.getLabelsFilePath()));
-                    ArrayList<String> labels = null;
+                    ArrayList<String> labels = new ArrayList<>();
+
                     try {
                         labels = fm.readFromLabelsFile(uri);
                     } catch (FileNotFoundException e) {
                         e.printStackTrace();
                     }
                     Log.e(TAG, "Current Read Label:"+ Arrays.toString(new String[labels.size()]));
-                    frag_man.beginTransaction().add(R.id.fragment_container_view, new ChordFragment(labels.get(0)) , "CHORDS").commit();
+                    frag_man.beginTransaction().add(R.id.fragment_container_view, new ChordFragment(labels) , "CHORDS").commit();
 
                 }
             }

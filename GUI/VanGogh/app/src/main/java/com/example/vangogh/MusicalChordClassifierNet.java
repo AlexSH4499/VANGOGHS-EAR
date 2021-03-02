@@ -77,6 +77,7 @@ public class MusicalChordClassifierNet extends Classifier{
     protected String getLabelPath() {
         return "labels.txt";
     }
+
     /** Memory-map the model file in Assets. */
     private MappedByteBuffer loadModelFile(Activity activity) throws IOException {
         //TODO: Implement this method for loading the model
